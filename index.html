@@ -185,7 +185,6 @@
 
         /* Mobile Slide Menu */
         .mobile-menu {
-            display: none;
             position: fixed;
             top: 0;
             right: -100%;
@@ -197,10 +196,12 @@
             transition: right 0.3s ease;
             box-shadow: -5px 0 20px rgba(0,0,0,0.1);
             overflow-y: auto;
+            visibility: hidden;
         }
 
         .mobile-menu.active {
             right: 0;
+            visibility: visible;
         }
 
         .mobile-menu-header {
@@ -263,7 +264,6 @@
 
         /* Mobile Menu Overlay */
         .mobile-overlay {
-            display: none;
             position: fixed;
             top: 0;
             left: 0;
@@ -272,11 +272,15 @@
             background: rgba(0,0,0,0.5);
             z-index: 998;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
         }
 
         .mobile-overlay.active {
             opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
         }
 
         /* Bottom Navigation (Mobile) */
@@ -288,7 +292,7 @@
             right: 0;
             background: var(--white);
             box-shadow: 0 -2px 20px rgba(0,0,0,0.1);
-            z-index: 997;
+            z-index: 100;
             padding-bottom: var(--safe-area-bottom);
         }
 
@@ -968,14 +972,6 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-            }
-
-            .mobile-menu {
-                display: block;
-            }
-
-            .mobile-overlay {
-                display: block;
             }
 
             .bottom-nav {
