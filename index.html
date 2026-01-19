@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دبي العقارية - أسعار العقارات في دبي</title>
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/dubai@5.0.1/index.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.cdnfonts.com/css/dubai');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #0066cc;
+            --primary-dark: #004999;
+            --accent-teal: #00a0a0;
+            --bg-light: #f5f7fa;
+            --bg-dark: #1a1f36;
+            --text-dark: #2d3436;
+            --text-light: #636e72;
+            --white: #ffffff;
+            --border-color: #e0e6ed;
+            --success-green: #00b894;
+            --warning-orange: #fdcb6e;
+            --danger-red: #d63031;
+        }
+
+        body {
+            font-family: 'Dubai', sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            min-height: 100vh;
+            direction: rtl;
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 60px;
+            background: var(--white);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-teal));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 35px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-dark);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-blue);
+        }
+
+        .nav-links a i {
+            font-size: 14px;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .btn-primary {
+            background: var(--primary-blue);
+            color: white;
+            padding: 10px 24px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Dubai', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 140px 60px 60px;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #2d3a5c 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('images/dubai-skyline.jpg') center/cover;
+            opacity: 0.15;
+            z-index: 0;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: 40px;
+            max-width: 600px;
+        }
+
+        /* Search Box */
+        .search-container {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            max-width: 900px;
+        }
+
+        .search-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .search-tab {
+            padding: 10px 20px;
+            background: var(--bg-light);
+            border: none;
+            border-radius: 8px;
+            font-family: 'Dubai', sans-serif;
+            font-size: 14px;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .search-tab.active {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .search-fields {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr auto;
+            gap: 15px;
+            align-items: end;
+        }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .field-group label {
+            font-size: 13px;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .field-group input,
+        .field-group select {
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'Dubai', sans-serif;
+            font-size: 14px;
+            color: var(--text-dark);
+            background: var(--white);
+            transition: border-color 0.3s ease;
+        }
+
+        .field-group input:focus,
+        .field-group select:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+        }
+
+        .search-btn {
+            background: var(--primary-blue);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Dubai', sans-serif;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            height: fit-content;
+        }
+
+        .search-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Stats Section */
+        .stats-section {
+            padding: 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .stats-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .stats-header h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .stats-period {
+            display: flex;
+            gap: 10px;
+        }
+
+        .period-btn {
+            padding: 8px 16px;
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: 'Dubai', sans-serif;
+            font-size: 13px;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .period-btn.active {
+            background: var(--primary-blue);
+            border-color: var(--primary-blue);
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+
+        .stat-icon.blue {
+            background: rgba(0, 102, 204, 0.1);
+            color: var(--primary-blue);
+        }
+
+        .stat-icon.teal {
+            background: rgba(0, 160, 160, 0.1);
+            color: var(--accent-teal);
+        }
+
+        .stat-icon.green {
+            background: rgba(0, 184, 148, 0.1);
+            color: var(--success-green);
+        }
+
+        .stat-icon.orange {
+            background: rgba(253, 203, 110, 0.2);
+            color: #e17055;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        .stat-change {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 13px;
+        }
+
+        .stat-change.positive {
+            color: var(--success-green);
+        }
+
+        .stat-change.negative {
+            color: var(--danger-red);
+        }
+
+        /* Map Section */
+        .map-section {
+            padding: 60px;
+            background: var(--white);
+        }
+
+        .map-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .map-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .map-header h2 {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .map-filters {
+            display: flex;
+            gap: 15px;
+        }
+
+        .filter-select {
+            padding: 10px 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'Dubai', sans-serif;
+            font-size: 14px;
+            color: var(--text-dark);
+            background: var(--white);
+            cursor: pointer;
+        }
+
+        .map-placeholder {
+            background: linear-gradient(135deg, #e8f4f8 0%, #d4e8ed 100%);
+            border-radius: 16px;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .map-placeholder::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="30" r="3" fill="%230066cc" opacity="0.5"/><circle cx="50" cy="40" r="4" fill="%2300a0a0" opacity="0.6"/><circle cx="70" cy="25" r="3" fill="%230066cc" opacity="0.4"/><circle cx="35" cy="60" r="5" fill="%2300b894" opacity="0.5"/><circle cx="80" cy="55" r="3" fill="%230066cc" opacity="0.5"/><circle cx="45" cy="75" r="4" fill="%2300a0a0" opacity="0.4"/></svg>') center/cover;
+            opacity: 0.3;
+        }
+
+        .map-placeholder i {
+            font-size: 80px;
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .map-placeholder p {
+            font-size: 20px;
+            color: var(--text-dark);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Trends Section */
+        .trends-section {
+            padding: 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .trends-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .trends-header h2 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .trends-header p {
+            color: var(--text-light);
+            font-size: 16px;
+        }
+
+        .trends-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        .trend-card {
+            background: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .trend-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .trend-image {
+            height: 180px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-teal));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .trend-image i {
+            font-size: 60px;
+            color: white;
+            opacity: 0.8;
+        }
+
+        .trend-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255,255,255,0.9);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--primary-blue);
+        }
+
+        .trend-content {
+            padding: 25px;
+        }
+
+        .trend-content h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--text-dark);
+        }
+
+        .trend-content p {
+            color: var(--text-light);
+            font-size: 14px;
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        .trend-stats {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .trend-stat {
+            text-align: center;
+        }
+
+        .trend-stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+
+        .trend-stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        /* Features Section */
+        .features-section {
+            padding: 60px;
+            background: var(--bg-dark);
+            color: white;
+        }
+
+        .features-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .features-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .features-header h2 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .features-header p {
+            opacity: 0.8;
+            font-size: 16px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 30px 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-teal));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 28px;
+        }
+
+        .feature-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            opacity: 0.7;
+            line-height: 1.8;
+        }
+
+        /* Footer */
+        footer {
+            background: #0d1117;
+            color: white;
+            padding: 60px;
+        }
+
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 50px;
+        }
+
+        .footer-brand h3 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--primary-blue);
+        }
+
+        .footer-brand p {
+            opacity: 0.7;
+            font-size: 14px;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 15px;
+        }
+
+        .footer-social a {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .footer-social a:hover {
+            background: var(--primary-blue);
+        }
+
+        .footer-links h4 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-blue);
+        }
+
+        .footer-bottom {
+            max-width: 1400px;
+            margin: 40px auto 0;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .search-fields {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .trends-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                padding: 15px 20px;
+            }
+
+            .nav-links, .nav-actions {
+                display: none;
+            }
+
+            .hero {
+                padding: 120px 20px 40px;
+            }
+
+            .hero h1 {
+                font-size: 28px;
+            }
+
+            .search-fields {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-section,
+            .map-section,
+            .trends-section,
+            .features-section {
+                padding: 40px 20px;
+            }
+
+            .stats-grid,
+            .trends-grid,
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-container {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">
+            <div class="logo-icon">
+                <i class="fas fa-building"></i>
+            </div>
+            <span>دبي العقارية</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#"><i class="fas fa-chart-line"></i> اتجاهات السوق</a></li>
+            <li><a href="#"><i class="fas fa-map-marked-alt"></i> خريطة الأسعار</a></li>
+            <li><a href="#"><i class="fas fa-search-dollar"></i> تحليل المناطق</a></li>
+            <li><a href="#"><i class="fas fa-file-alt"></i> تقارير</a></li>
+            <li><a href="#"><i class="fas fa-question-circle"></i> المساعدة</a></li>
+        </ul>
+        <div class="nav-actions">
+            <button class="btn-primary">
+                <i class="fas fa-download"></i> تحميل التطبيق
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>اكتشف أسعار العقارات في دبي</h1>
+            <p>منصتك الشاملة لبيانات السوق العقاري في دبي - معلومات موثوقة من دائرة الأراضي والأملاك</p>
+
+            <div class="search-container">
+                <div class="search-tabs">
+                    <button class="search-tab active">بيع</button>
+                    <button class="search-tab">إيجار</button>
+                    <button class="search-tab">مشاريع جديدة</button>
+                </div>
+                <div class="search-fields">
+                    <div class="field-group">
+                        <label>المنطقة</label>
+                        <input type="text" placeholder="ابحث عن منطقة أو مشروع...">
+                    </div>
+                    <div class="field-group">
+                        <label>نوع العقار</label>
+                        <select>
+                            <option>جميع الأنواع</option>
+                            <option>شقة</option>
+                            <option>فيلا</option>
+                            <option>تاون هاوس</option>
+                            <option>أرض</option>
+                            <option>تجاري</option>
+                        </select>
+                    </div>
+                    <div class="field-group">
+                        <label>الحالة</label>
+                        <select>
+                            <option>الكل</option>
+                            <option>جاهز</option>
+                            <option>على الخارطة</option>
+                        </select>
+                    </div>
+                    <div class="field-group">
+                        <label>السعر</label>
+                        <select>
+                            <option>أي سعر</option>
+                            <option>أقل من 500,000</option>
+                            <option>500,000 - 1,000,000</option>
+                            <option>1,000,000 - 2,000,000</option>
+                            <option>أكثر من 2,000,000</option>
+                        </select>
+                    </div>
+                    <button class="search-btn">
+                        <i class="fas fa-search"></i>
+                        بحث
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="stats-header">
+            <h2>إحصائيات السوق العقاري</h2>
+            <div class="stats-period">
+                <button class="period-btn">أسبوعي</button>
+                <button class="period-btn active">شهري</button>
+                <button class="period-btn">سنوي</button>
+            </div>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon blue">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <div class="stat-label">إجمالي الصفقات</div>
+                <div class="stat-value">١٢,٤٥٦</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>+١٥.٣٪ من الشهر الماضي</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon teal">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <div class="stat-label">قيمة المبيعات (درهم)</div>
+                <div class="stat-value">٣٢.٥ مليار</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>+٢٢.١٪ من الشهر الماضي</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green">
+                    <i class="fas fa-chart-area"></i>
+                </div>
+                <div class="stat-label">متوسط السعر/قدم²</div>
+                <div class="stat-value">١,٢٤٥ د.إ</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>+٨.٧٪ من العام الماضي</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon orange">
+                    <i class="fas fa-building"></i>
+                </div>
+                <div class="stat-label">مشاريع على الخارطة</div>
+                <div class="stat-value">٤,٨٩٢</div>
+                <div class="stat-change negative">
+                    <i class="fas fa-arrow-down"></i>
+                    <span>-٣.٢٪ من الشهر الماضي</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section class="map-section">
+        <div class="map-container">
+            <div class="map-header">
+                <h2>خريطة أسعار العقارات</h2>
+                <div class="map-filters">
+                    <select class="filter-select">
+                        <option>جميع المناطق</option>
+                        <option>دبي مارينا</option>
+                        <option>داون تاون دبي</option>
+                        <option>نخلة جميرا</option>
+                        <option>الخليج التجاري</option>
+                        <option>جميرا بيتش ريزيدنس</option>
+                    </select>
+                    <select class="filter-select">
+                        <option>شقق</option>
+                        <option>فلل</option>
+                        <option>تاون هاوس</option>
+                    </select>
+                </div>
+            </div>
+            <div class="map-placeholder">
+                <i class="fas fa-map-marked-alt"></i>
+                <p>خريطة تفاعلية لأسعار العقارات في دبي</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trends Section -->
+    <section class="trends-section">
+        <div class="trends-header">
+            <h2>أبرز المناطق الاستثمارية</h2>
+            <p>اكتشف أفضل المناطق للاستثمار العقاري في دبي</p>
+        </div>
+        <div class="trends-grid">
+            <div class="trend-card">
+                <div class="trend-image">
+                    <i class="fas fa-city"></i>
+                    <span class="trend-badge">الأكثر طلباً</span>
+                </div>
+                <div class="trend-content">
+                    <h3>دبي مارينا</h3>
+                    <p>واحدة من أكثر المناطق السكنية شهرة في دبي، تتميز بإطلالات خلابة على المارينا.</p>
+                    <div class="trend-stats">
+                        <div class="trend-stat">
+                            <div class="trend-stat-value">١,٤٥٠</div>
+                            <div class="trend-stat-label">درهم/قدم²</div>
+                        </div>
+                        <div class="trend-stat">
+                            <div class="trend-stat-value">+١٢٪</div>
+                            <div class="trend-stat-label">نمو سنوي</div>
+                        </div>
+                        <div class="trend-stat">
+                            <div class="trend-stat-value">٢,٣٤٥</div>
+                            <div class="trend-stat-label">صفقة</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="trend-card">
+                <div class="trend-image" style="background: linear-gradient(135deg, #00b894, #00a0a0);">
+                    <i class="fas fa-landmark"></i>
+                    <span class="trend-badge">عائد مرتفع</span>
+                </div>
+                <div class="trend-content">
+                    <h3>داون تاون دبي</h3>
+                    <p>قلب دبي النابض، موطن برج خليفة ودبي مول وأشهر المعالم السياحية.</p>
+                    <div class="trend-stats">
+                        <div class="trend-stat">
+                            <div class="trend-stat-value">٢,١٠٠</div>
+                            <div class="trend-stat-label">درهم/قدم²</div>
+                        </div>
+                        <div class="trend-stat">
+                            <div class="trend-stat-value">+١٨٪</div>
+                            <div class="trend-stat-label">نمو سنوي</div>
+                        </div>
+                        <div class="trend-stat">
+                            <div class="trend-stat-value">١,٨٧٦</div>
+                            <div class="trend-stat-label">صفقة</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="trend-card">
+                <div class="trend-image" style="background: linear-gradient(135deg, #e17055, #fdcb6e);">
+                    <i class="fas fa-umbrella-beach"></i>
+                    <span class="trend-badge">فاخر</span>
+                </div>
+                <div class="trend-content">
+                    <h3>نخلة جميرا</h3>
+                    <p>الجزيرة الاصطناعية الأشهر في العالم، تضم أفخم الفلل والشقق الفندقية.</p>
+                    <div class="trend-stats">
+                        <div class="trend-stat">
+                            <div class="trend-stat-value">٢,٨٥٠</div>
+                            <div class="trend-stat-label">درهم/قدم²</div>
+                        </div>
+                        <div class="trend-stat">
+                            <div class="trend-stat-value">+٢٥٪</div>
+                            <div class="trend-stat-label">نمو سنوي</div>
+                        </div>
+                        <div class="trend-stat">
+                            <div class="trend-stat-value">٩٤٥</div>
+                            <div class="trend-stat-label">صفقة</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="features-container">
+            <div class="features-header">
+                <h2>لماذا دبي العقارية؟</h2>
+                <p>بيانات موثوقة وتحليلات شاملة لمساعدتك في اتخاذ قرارات استثمارية صحيحة</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h3>بيانات رسمية</h3>
+                    <p>جميع البيانات مصدرها دائرة الأراضي والأملاك في دبي</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-sync-alt"></i>
+                    </div>
+                    <h3>تحديث فوري</h3>
+                    <p>بيانات محدثة بشكل يومي لتعكس أحدث تغيرات السوق</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <h3>تحليلات متقدمة</h3>
+                    <p>رسوم بيانية وتقارير تفصيلية لفهم اتجاهات السوق</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>تطبيق جوال</h3>
+                    <p>تابع السوق العقاري في أي وقت ومن أي مكان</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-brand">
+                <h3>دبي العقارية</h3>
+                <p>منصتك الشاملة لاستكشاف سوق العقارات في دبي. نوفر لك بيانات موثوقة وتحليلات متعمقة لمساعدتك في اتخاذ أفضل القرارات الاستثمارية.</p>
+                <div class="footer-social">
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h4>روابط سريعة</h4>
+                <ul>
+                    <li><a href="#">الرئيسية</a></li>
+                    <li><a href="#">اتجاهات السوق</a></li>
+                    <li><a href="#">خريطة الأسعار</a></li>
+                    <li><a href="#">تحليل المناطق</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>الموارد</h4>
+                <ul>
+                    <li><a href="#">التقارير</a></li>
+                    <li><a href="#">الأسئلة الشائعة</a></li>
+                    <li><a href="#">دليل المستثمر</a></li>
+                    <li><a href="#">المدونة</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>تواصل معنا</h4>
+                <ul>
+                    <li><a href="#">اتصل بنا</a></li>
+                    <li><a href="#">الدعم الفني</a></li>
+                    <li><a href="#">الشراكات</a></li>
+                    <li><a href="#">الوظائف</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© ٢٠٢٦ دبي العقارية. جميع الحقوق محفوظة.</p>
+            <p>سياسة الخصوصية | الشروط والأحكام</p>
+        </div>
+    </footer>
+</body>
+</html>
