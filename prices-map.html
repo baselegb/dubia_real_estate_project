@@ -508,6 +508,31 @@
             justify-content: center;
             z-index: 1001;
             transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .control-toggle::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: var(--primary-blue);
+            border-radius: 12px;
+            opacity: 0;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 0;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.3;
+                transform: scale(1.1);
+            }
         }
 
         .control-toggle:hover {
@@ -516,17 +541,57 @@
             box-shadow: 0 6px 20px rgba(0,102,204,0.4);
         }
 
+        .control-toggle:hover::before {
+            animation: none;
+        }
+
         .control-toggle i {
             font-size: 20px;
             transition: transform 0.3s ease;
+            position: relative;
+            z-index: 1;
         }
 
         .control-toggle.active {
             background: var(--danger-red);
         }
 
+        .control-toggle.active::before {
+            background: var(--danger-red);
+            animation: none;
+        }
+
         .control-toggle.active i {
             transform: rotate(180deg);
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: absolute;
+            background: rgba(0,0,0,0.85);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 10000;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .tooltip.show {
+            opacity: 1;
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: rgba(0,0,0,0.85);
         }
 
         .control-header {
@@ -721,6 +786,15 @@
             border-radius: 10px;
             box-shadow: 0 4px 16px rgba(0,0,0,0.15);
             z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .map-legend.minimized {
+            padding: 8px 10px;
+        }
+
+        .map-legend.minimized .legend-items {
+            display: none;
         }
 
         .map-legend h4 {
@@ -728,6 +802,25 @@
             font-weight: 700;
             margin-bottom: 8px;
             color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .map-legend.minimized h4 {
+            margin-bottom: 0;
+        }
+
+        .legend-toggle {
+            font-size: 10px;
+            color: var(--primary-blue);
+            transition: transform 0.3s ease;
+        }
+
+        .map-legend.minimized .legend-toggle {
+            transform: rotate(180deg);
         }
 
         .legend-item {
@@ -763,6 +856,12 @@
             z-index: 1000;
             max-width: 300px;
             transition: all 0.3s ease;
+            border-top: 3px solid var(--primary-blue);
+        }
+
+        .info-card:hover {
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+            transform: translateY(-2px);
         }
 
         .info-card h3 {
@@ -770,6 +869,14 @@
             font-weight: 700;
             color: var(--text-dark);
             margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .info-card h3 i {
+            color: var(--primary-blue);
+            font-size: 12px;
         }
 
         .info-stats {
@@ -843,6 +950,7 @@
             align-items: center;
             gap: 8px;
             white-space: nowrap;
+            position: relative;
         }
 
         .map-control-btn:hover {
@@ -852,8 +960,209 @@
             box-shadow: 0 4px 16px rgba(0,0,0,0.15);
         }
 
+        .map-control-btn:active {
+            transform: translateX(2px) scale(0.98);
+        }
+
         .map-control-btn i {
             font-size: 14px;
+        }
+
+        /* Quick Access Areas */
+        .quick-areas {
+            position: absolute;
+            top: 80px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            z-index: 1000;
+            max-width: 200px;
+        }
+
+        .quick-area-btn {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-family: 'Dubai', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            text-align: right;
+            color: var(--text-dark);
+            border-right: 3px solid transparent;
+        }
+
+        .quick-area-btn:hover {
+            background: var(--bg-light);
+            border-right-color: var(--primary-blue);
+            transform: translateX(-3px);
+        }
+
+        .quick-area-btn.active {
+            background: var(--primary-blue);
+            color: white;
+            border-right-color: var(--primary-dark);
+        }
+
+        /* Search Suggestions */
+        .search-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 10;
+            display: none;
+        }
+
+        .search-suggestions.show {
+            display: block;
+        }
+
+        .suggestion-item {
+            padding: 10px 16px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            font-size: 13px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        .suggestion-item:hover {
+            background: var(--bg-light);
+        }
+
+        .suggestion-item strong {
+            color: var(--primary-blue);
+        }
+
+        /* Help Modal */
+        .help-button {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: none;
+            border-radius: 50%;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            color: var(--primary-blue);
+        }
+
+        .help-button:hover {
+            background: var(--primary-blue);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .help-button i {
+            font-size: 18px;
+        }
+
+        .help-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 20px;
+        }
+
+        .help-modal.show {
+            display: flex;
+        }
+
+        .help-content {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .help-content h2 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text-dark);
+        }
+
+        .help-section {
+            margin-bottom: 20px;
+        }
+
+        .help-section h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--primary-blue);
+        }
+
+        .help-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .help-key {
+            background: var(--bg-light);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 11px;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .help-close {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            width: 32px;
+            height: 32px;
+            background: var(--bg-light);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .help-close:hover {
+            background: var(--primary-blue);
+            color: white;
         }
 
         /* Leaflet Popup Customization */
@@ -1132,6 +1441,44 @@
             .view-modes {
                 grid-template-columns: repeat(3, 1fr);
             }
+
+            .quick-areas {
+                top: auto;
+                bottom: 160px;
+                right: auto;
+                left: 12px;
+                max-width: calc(100% - 84px);
+            }
+
+            .quick-area-btn {
+                font-size: 10px;
+                padding: 6px 10px;
+            }
+
+            .help-button {
+                bottom: 150px;
+                right: 16px;
+                width: 40px;
+                height: 40px;
+            }
+
+            .help-button i {
+                font-size: 16px;
+            }
+
+            .help-content {
+                padding: 20px;
+                max-height: 70vh;
+            }
+
+            .help-content h2 {
+                font-size: 18px;
+            }
+
+            .help-key {
+                font-size: 10px;
+                min-width: 50px;
+            }
         }
     </style>
 </head>
@@ -1272,34 +1619,119 @@
             <div id="map"></div>
 
             <!-- Map Legend -->
-            <div class="map-legend">
-                <h4>دليل الأسعار (درهم/قدم²)</h4>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #00b894;"></div>
-                    <span>500 - 1,000</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #00a0a0;"></div>
-                    <span>1,000 - 1,500</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #0066cc;"></div>
-                    <span>1,500 - 2,000</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #004999;"></div>
-                    <span>2,000 - 2,500</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: #6c5ce7;"></div>
-                    <span>2,500+</span>
+            <div class="map-legend" id="mapLegend">
+                <h4 onclick="toggleLegend()">
+                    <span>دليل الأسعار (درهم/قدم²)</span>
+                    <i class="fas fa-chevron-up legend-toggle"></i>
+                </h4>
+                <div class="legend-items">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #00b894;"></div>
+                        <span>500 - 1,000</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #00a0a0;"></div>
+                        <span>1,000 - 1,500</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #0066cc;"></div>
+                        <span>1,500 - 2,000</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #004999;"></div>
+                        <span>2,000 - 2,500</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #6c5ce7;"></div>
+                        <span>2,500+</span>
+                    </div>
                 </div>
             </div>
 
             <!-- Control Panel Toggle Button -->
-            <button class="control-toggle" onclick="toggleControlPanel()">
+            <button class="control-toggle" onclick="toggleControlPanel()" title="عرض/إخفاء الفلاتر">
                 <i class="fas fa-sliders-h"></i>
             </button>
+
+            <!-- Quick Access Areas -->
+            <div class="quick-areas">
+                <button class="quick-area-btn" onclick="zoomToArea('Dubai Marina')" data-area="Dubai Marina">
+                    <i class="fas fa-map-pin"></i> دبي مارينا
+                </button>
+                <button class="quick-area-btn" onclick="zoomToArea('Downtown Dubai')" data-area="Downtown Dubai">
+                    <i class="fas fa-map-pin"></i> وسط المدينة
+                </button>
+                <button class="quick-area-btn" onclick="zoomToArea('Palm Jumeirah')" data-area="Palm Jumeirah">
+                    <i class="fas fa-map-pin"></i> نخلة جميرا
+                </button>
+            </div>
+
+            <!-- Help Button -->
+            <button class="help-button" onclick="toggleHelp()" title="المساعدة وإختصارات لوحة المفاتيح">
+                <i class="fas fa-question"></i>
+            </button>
+
+            <!-- Help Modal -->
+            <div class="help-modal" id="helpModal" onclick="toggleHelp()">
+                <div class="help-content" onclick="event.stopPropagation()">
+                    <button class="help-close" onclick="toggleHelp()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <h2>المساعدة وإختصارات لوحة المفاتيح</h2>
+
+                    <div class="help-section">
+                        <h3><i class="fas fa-keyboard"></i> إختصارات لوحة المفاتيح</h3>
+                        <div class="help-item">
+                            <span class="help-key">Ctrl/Cmd + F</span>
+                            <span>فتح البحث</span>
+                        </div>
+                        <div class="help-item">
+                            <span class="help-key">Ctrl/Cmd + L</span>
+                            <span>عرض/إخفاء الدليل</span>
+                        </div>
+                        <div class="help-item">
+                            <span class="help-key">R</span>
+                            <span>إعادة تعيين العرض</span>
+                        </div>
+                        <div class="help-item">
+                            <span class="help-key">Esc</span>
+                            <span>إغلاق القوائم المفتوحة</span>
+                        </div>
+                    </div>
+
+                    <div class="help-section">
+                        <h3><i class="fas fa-mouse-pointer"></i> التفاعل مع الخريطة</h3>
+                        <div class="help-item">
+                            <i class="fas fa-hand-pointer" style="width: 20px;"></i>
+                            <span>انقر على أي منطقة لعرض التفاصيل</span>
+                        </div>
+                        <div class="help-item">
+                            <i class="fas fa-search-plus" style="width: 20px;"></i>
+                            <span>استخدم عجلة الفأرة للتكبير والتصغير</span>
+                        </div>
+                        <div class="help-item">
+                            <i class="fas fa-arrows-alt" style="width: 20px;"></i>
+                            <span>اسحب الخريطة للتنقل</span>
+                        </div>
+                    </div>
+
+                    <div class="help-section">
+                        <h3><i class="fas fa-sliders-h"></i> الميزات</h3>
+                        <div class="help-item">
+                            <i class="fas fa-filter" style="width: 20px;"></i>
+                            <span>استخدم الفلاتر لتخصيص العرض</span>
+                        </div>
+                        <div class="help-item">
+                            <i class="fas fa-eye" style="width: 20px;"></i>
+                            <span>قم بتبديل أوضاع العرض (قياسي، حراري، قمر صناعي)</span>
+                        </div>
+                        <div class="help-item">
+                            <i class="fas fa-download" style="width: 20px;"></i>
+                            <span>قم بتصدير البيانات بصيغة CSV</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- Control Panel -->
             <div class="control-panel" id="controlPanel">
@@ -1310,8 +1742,9 @@
 
                 <!-- Search Box -->
                 <div class="search-box">
-                    <input type="text" id="areaSearch" placeholder="ابحث عن منطقة..." onkeyup="searchArea()">
+                    <input type="text" id="areaSearch" placeholder="ابحث عن منطقة..." onkeyup="searchArea()" onfocus="showSuggestions()" onblur="hideSuggestions()">
                     <i class="fas fa-search"></i>
+                    <div class="search-suggestions" id="searchSuggestions"></div>
                 </div>
 
                 <!-- View Modes -->
@@ -1950,9 +2383,210 @@
             alert(`مقارنة منطقة: ${areaName}`);
         }
 
+        // Toggle legend
+        function toggleLegend() {
+            const legend = document.getElementById('mapLegend');
+            legend.classList.toggle('minimized');
+        }
+
+        // Zoom to specific area
+        function zoomToArea(areaNameEn) {
+            const area = dubaiAreas.find(a => a.nameEn === areaNameEn);
+            if (area) {
+                const bounds = L.latLngBounds(area.bounds[0], area.bounds[1]);
+                map.fitBounds(bounds, { padding: [50, 50] });
+
+                // Find and highlight the area
+                const areaIndex = dubaiAreas.findIndex(a => a.nameEn === areaNameEn);
+                if (areaIndex !== -1 && areaLayers[areaIndex]) {
+                    areaLayers[areaIndex].openPopup();
+                    updateInfoCard(area);
+                }
+
+                // Update active button
+                document.querySelectorAll('.quick-area-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                const activeBtn = document.querySelector(`.quick-area-btn[data-area="${areaNameEn}"]`);
+                if (activeBtn) {
+                    activeBtn.classList.add('active');
+                }
+            }
+        }
+
+        // Show search suggestions
+        function showSuggestions() {
+            const input = document.getElementById('areaSearch');
+            const searchTerm = input.value.toLowerCase();
+            const suggestions = document.getElementById('searchSuggestions');
+
+            if (searchTerm.length === 0) {
+                // Show all areas as suggestions
+                const html = dubaiAreas.map(area =>
+                    `<div class="suggestion-item" onmousedown="selectSuggestion('${area.nameEn}')">${area.name}</div>`
+                ).join('');
+                suggestions.innerHTML = html;
+                suggestions.classList.add('show');
+            } else {
+                updateSuggestions();
+            }
+        }
+
+        // Update suggestions based on search
+        function updateSuggestions() {
+            const input = document.getElementById('areaSearch');
+            const searchTerm = input.value.toLowerCase();
+            const suggestions = document.getElementById('searchSuggestions');
+
+            if (searchTerm.length > 0) {
+                const filtered = dubaiAreas.filter(area =>
+                    area.name.toLowerCase().includes(searchTerm) ||
+                    area.nameEn.toLowerCase().includes(searchTerm)
+                );
+
+                if (filtered.length > 0) {
+                    const html = filtered.map(area => {
+                        const highlightedName = area.name.replace(
+                            new RegExp(searchTerm, 'gi'),
+                            match => `<strong>${match}</strong>`
+                        );
+                        return `<div class="suggestion-item" onmousedown="selectSuggestion('${area.nameEn}')">${highlightedName}</div>`;
+                    }).join('');
+                    suggestions.innerHTML = html;
+                    suggestions.classList.add('show');
+                } else {
+                    suggestions.innerHTML = '<div class="suggestion-item">لا توجد نتائج</div>';
+                    suggestions.classList.add('show');
+                }
+            } else {
+                suggestions.classList.remove('show');
+            }
+        }
+
+        // Hide suggestions
+        function hideSuggestions() {
+            setTimeout(() => {
+                document.getElementById('searchSuggestions').classList.remove('show');
+            }, 200);
+        }
+
+        // Select suggestion
+        function selectSuggestion(areaNameEn) {
+            const area = dubaiAreas.find(a => a.nameEn === areaNameEn);
+            if (area) {
+                document.getElementById('areaSearch').value = area.name;
+                zoomToArea(areaNameEn);
+                hideSuggestions();
+            }
+        }
+
+        // Toggle help modal
+        function toggleHelp() {
+            const modal = document.getElementById('helpModal');
+            modal.classList.toggle('show');
+        }
+
+        // Enhanced search area function
+        const originalSearchArea = searchArea;
+        searchArea = function() {
+            updateSuggestions();
+            originalSearchArea();
+        };
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Escape key - close panels
+            if (e.key === 'Escape') {
+                const menu = document.querySelector('.mobile-menu');
+                const panel = document.getElementById('controlPanel');
+
+                if (menu && menu.classList.contains('active')) {
+                    toggleMobileMenu();
+                } else if (panel && panel.classList.contains('active')) {
+                    toggleControlPanel();
+                }
+            }
+
+            // Ctrl/Cmd + F - Focus search
+            if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+                e.preventDefault();
+                toggleControlPanel();
+                setTimeout(() => {
+                    document.getElementById('areaSearch').focus();
+                }, 300);
+            }
+
+            // Ctrl/Cmd + L - Toggle legend
+            if ((e.ctrlKey || e.metaKey) && e.key === 'l') {
+                e.preventDefault();
+                toggleLegend();
+            }
+
+            // R key - Reset view
+            if (e.key === 'r' || e.key === 'R') {
+                if (!document.activeElement || document.activeElement.tagName !== 'INPUT') {
+                    resetMapView();
+                }
+            }
+
+            // ? key - Show help
+            if (e.key === '?' || (e.shiftKey && e.key === '/')) {
+                if (!document.activeElement || document.activeElement.tagName !== 'INPUT') {
+                    e.preventDefault();
+                    toggleHelp();
+                }
+            }
+        });
+
+        // Add tooltips to control buttons
+        function initTooltips() {
+            const buttons = document.querySelectorAll('.map-control-btn');
+            buttons.forEach(btn => {
+                btn.addEventListener('mouseenter', function(e) {
+                    const text = this.querySelector('span').textContent;
+                    showTooltip(this, text);
+                });
+
+                btn.addEventListener('mouseleave', function() {
+                    hideTooltip();
+                });
+            });
+        }
+
+        let tooltipElement = null;
+        function showTooltip(element, text) {
+            hideTooltip();
+            tooltipElement = document.createElement('div');
+            tooltipElement.className = 'tooltip show';
+            tooltipElement.textContent = text;
+            document.body.appendChild(tooltipElement);
+
+            const rect = element.getBoundingClientRect();
+            tooltipElement.style.top = rect.top - tooltipElement.offsetHeight - 10 + 'px';
+            tooltipElement.style.left = rect.left + (rect.width / 2) - (tooltipElement.offsetWidth / 2) + 'px';
+        }
+
+        function hideTooltip() {
+            if (tooltipElement) {
+                tooltipElement.remove();
+                tooltipElement = null;
+            }
+        }
+
         // Initialize map when page loads
         document.addEventListener('DOMContentLoaded', function() {
             initMap();
+            initTooltips();
+
+            // Show a welcome tooltip for first-time users
+            if (!localStorage.getItem('mapVisited')) {
+                setTimeout(() => {
+                    const toggle = document.querySelector('.control-toggle');
+                    showTooltip(toggle, 'انقر هنا للوصول إلى الفلاتر');
+                    setTimeout(hideTooltip, 3000);
+                    localStorage.setItem('mapVisited', 'true');
+                }, 2000);
+            }
         });
     </script>
 </body>
