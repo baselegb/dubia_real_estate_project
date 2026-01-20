@@ -9,6 +9,9 @@
     <title>خريطة الأسعار - دبي العقارية</title>
     <link href="https://cdn.jsdelivr.net/npm/@fontsource/dubai@5.0.1/index.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
     <style>
         @import url('https://fonts.cdnfonts.com/css/dubai');
 
@@ -445,6 +448,513 @@
             opacity: 0.7;
         }
 
+        /* Map Container */
+        .map-container {
+            position: relative;
+            width: 100%;
+            height: calc(100vh - 180px);
+            background: var(--white);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Control Panel */
+        .control-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--white);
+            border-radius: 16px;
+            padding: 24px;
+            width: 320px;
+            max-height: calc(100vh - 260px);
+            overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            z-index: 1000;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .control-panel.collapsed {
+            transform: translateX(calc(100% + 20px));
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .control-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            background: var(--white);
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            transition: all 0.3s ease;
+        }
+
+        .control-toggle:hover {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .control-toggle i {
+            font-size: 18px;
+            transition: transform 0.3s ease;
+        }
+
+        .control-toggle.active i {
+            transform: rotate(180deg);
+        }
+
+        .control-header {
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .control-header h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .control-header p {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        .control-section {
+            margin-bottom: 24px;
+        }
+
+        .control-section h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-section h4 i {
+            color: var(--primary-blue);
+            font-size: 16px;
+        }
+
+        /* Search Input */
+        .search-box {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 40px 12px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-family: 'Dubai', sans-serif;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0,102,204,0.1);
+        }
+
+        .search-box i {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+
+        /* Filter Groups */
+        .filter-group {
+            margin-bottom: 16px;
+        }
+
+        .filter-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .filter-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'Dubai', sans-serif;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-group select:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+        }
+
+        /* View Mode Buttons */
+        .view-modes {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .view-mode-btn {
+            padding: 10px;
+            border: 2px solid var(--border-color);
+            background: white;
+            border-radius: 8px;
+            font-family: 'Dubai', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .view-mode-btn i {
+            font-size: 16px;
+        }
+
+        .view-mode-btn:hover {
+            background: var(--bg-light);
+        }
+
+        .view-mode-btn.active {
+            background: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+
+        /* Price Range Slider */
+        .price-range {
+            margin-top: 12px;
+        }
+
+        .price-range-values {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+
+        .price-slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: linear-gradient(to left, var(--primary-blue), var(--accent-teal));
+            cursor: pointer;
+        }
+
+        /* Statistics Cards */
+        .stats-mini {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .stat-mini-card {
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-teal));
+            padding: 16px;
+            border-radius: 12px;
+            color: white;
+        }
+
+        .stat-mini-card .label {
+            font-size: 11px;
+            opacity: 0.9;
+            margin-bottom: 4px;
+        }
+
+        .stat-mini-card .value {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        /* Map Legend */
+        .map-legend {
+            position: absolute;
+            bottom: 30px;
+            left: 20px;
+            background: var(--white);
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            z-index: 1000;
+        }
+
+        .map-legend h4 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-dark);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+
+        .legend-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .legend-color {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            border: 2px solid rgba(0,0,0,0.1);
+        }
+
+        /* Info Cards on Map */
+        .info-card {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: var(--white);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            z-index: 1000;
+            min-width: 280px;
+        }
+
+        .info-card h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+        }
+
+        .info-stats {
+            display: grid;
+            gap: 10px;
+        }
+
+        .info-stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+        }
+
+        .info-stat .label {
+            color: var(--text-light);
+        }
+
+        .info-stat .value {
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .info-stat .trend {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+
+        .info-stat .trend.up {
+            background: rgba(0,184,148,0.1);
+            color: var(--success-green);
+        }
+
+        .info-stat .trend.down {
+            background: rgba(214,48,49,0.1);
+            color: var(--danger-red);
+        }
+
+        /* Map Controls */
+        .map-controls {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+            z-index: 1000;
+        }
+
+        .map-control-btn {
+            background: var(--white);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-family: 'Dubai', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .map-control-btn:hover {
+            background: var(--primary-blue);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+
+        .map-control-btn i {
+            font-size: 14px;
+        }
+
+        /* Leaflet Popup Customization */
+        .leaflet-popup-content-wrapper {
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        }
+
+        .leaflet-popup-content {
+            margin: 16px;
+            font-family: 'Dubai', sans-serif;
+        }
+
+        .popup-content h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .popup-stats {
+            display: grid;
+            gap: 10px;
+        }
+
+        .popup-stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .popup-stat .label {
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .popup-stat .value {
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+
+        .popup-actions {
+            margin-top: 16px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .popup-btn {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Dubai', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .popup-btn-primary {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .popup-btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .popup-btn-secondary {
+            background: var(--bg-light);
+            color: var(--text-dark);
+        }
+
+        .popup-btn-secondary:hover {
+            background: var(--border-color);
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            transition: opacity 0.3s ease;
+        }
+
+        .loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--border-color);
+            border-top-color: var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            margin-top: 16px;
+            font-size: 14px;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
         /* Mobile Responsive */
         @media (max-width: 768px) {
             body {
@@ -507,6 +1017,64 @@
                 text-align: center;
                 margin-top: 32px;
                 padding-top: 24px;
+            }
+
+            .map-container {
+                height: calc(100vh - 140px);
+                border-radius: 12px;
+            }
+
+            .control-panel {
+                top: auto;
+                bottom: 0;
+                right: 0;
+                left: 0;
+                width: 100%;
+                max-height: 60vh;
+                border-radius: 20px 20px 0 0;
+                padding: 20px 16px;
+            }
+
+            .control-toggle {
+                top: auto;
+                bottom: 16px;
+                right: 16px;
+                width: 56px;
+                height: 56px;
+                border-radius: 50%;
+            }
+
+            .info-card {
+                left: 12px;
+                top: 12px;
+                min-width: calc(100% - 24px);
+                padding: 16px;
+            }
+
+            .map-legend {
+                bottom: 90px;
+                left: 12px;
+                right: 12px;
+                padding: 12px;
+            }
+
+            .legend-item {
+                font-size: 11px;
+            }
+
+            .map-controls {
+                top: 12px;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .map-control-btn {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+
+            .view-modes {
+                grid-template-columns: repeat(3, 1fr);
             }
         }
     </style>
@@ -595,7 +1163,193 @@
             <p>خريطة تفاعلية لأسعار العقارات في جميع مناطق دبي</p>
         </div>
 
-        <!-- Map content will be added here -->
+        <!-- Interactive Map Container -->
+        <div class="map-container">
+            <!-- Loading Overlay -->
+            <div class="loading-overlay" id="loadingOverlay">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">جاري تحميل الخريطة...</div>
+            </div>
+
+            <!-- Map Controls -->
+            <div class="map-controls">
+                <button class="map-control-btn" onclick="resetMapView()">
+                    <i class="fas fa-crosshairs"></i>
+                    <span>إعادة تعيين</span>
+                </button>
+                <button class="map-control-btn" onclick="toggleFullscreen()">
+                    <i class="fas fa-expand"></i>
+                    <span>ملء الشاشة</span>
+                </button>
+                <button class="map-control-btn" onclick="exportData()">
+                    <i class="fas fa-download"></i>
+                    <span>تصدير البيانات</span>
+                </button>
+            </div>
+
+            <!-- Info Card -->
+            <div class="info-card" id="infoCard">
+                <h3>معلومات المنطقة</h3>
+                <div class="info-stats">
+                    <div class="info-stat">
+                        <span class="label">المنطقة المختارة:</span>
+                        <span class="value" id="selectedArea">دبي</span>
+                    </div>
+                    <div class="info-stat">
+                        <span class="label">متوسط السعر:</span>
+                        <span class="value" id="avgPrice">1,450 درهم/قدم²</span>
+                    </div>
+                    <div class="info-stat">
+                        <span class="label">عدد العقارات:</span>
+                        <span class="value" id="propertyCount">4,892</span>
+                    </div>
+                    <div class="info-stat">
+                        <span class="label">النمو السنوي:</span>
+                        <span class="trend up" id="growth">
+                            <i class="fas fa-arrow-up"></i> 15.2%
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Map Element -->
+            <div id="map"></div>
+
+            <!-- Map Legend -->
+            <div class="map-legend">
+                <h4>دليل الأسعار (درهم/قدم²)</h4>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #00b894;"></div>
+                    <span>500 - 1,000</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #00a0a0;"></div>
+                    <span>1,000 - 1,500</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #0066cc;"></div>
+                    <span>1,500 - 2,000</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #004999;"></div>
+                    <span>2,000 - 2,500</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #6c5ce7;"></div>
+                    <span>2,500+</span>
+                </div>
+            </div>
+
+            <!-- Control Panel Toggle Button -->
+            <button class="control-toggle" onclick="toggleControlPanel()">
+                <i class="fas fa-sliders-h"></i>
+            </button>
+
+            <!-- Control Panel -->
+            <div class="control-panel" id="controlPanel">
+                <div class="control-header">
+                    <h3>التحكم بالخريطة</h3>
+                    <p>استخدم الفلاتر لتخصيص العرض</p>
+                </div>
+
+                <!-- Search Box -->
+                <div class="search-box">
+                    <input type="text" id="areaSearch" placeholder="ابحث عن منطقة..." onkeyup="searchArea()">
+                    <i class="fas fa-search"></i>
+                </div>
+
+                <!-- View Modes -->
+                <div class="control-section">
+                    <h4><i class="fas fa-eye"></i> وضع العرض</h4>
+                    <div class="view-modes">
+                        <button class="view-mode-btn active" onclick="changeViewMode('standard')" id="viewStandard">
+                            <i class="fas fa-map"></i>
+                            <span>قياسي</span>
+                        </button>
+                        <button class="view-mode-btn" onclick="changeViewMode('heatmap')" id="viewHeatmap">
+                            <i class="fas fa-fire"></i>
+                            <span>حراري</span>
+                        </button>
+                        <button class="view-mode-btn" onclick="changeViewMode('satellite')" id="viewSatellite">
+                            <i class="fas fa-satellite"></i>
+                            <span>قمر صناعي</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Property Type Filter -->
+                <div class="control-section">
+                    <h4><i class="fas fa-building"></i> نوع العقار</h4>
+                    <div class="filter-group">
+                        <select id="propertyTypeFilter" onchange="applyFilters()">
+                            <option value="all">جميع الأنواع</option>
+                            <option value="apartment">شقق</option>
+                            <option value="villa">فلل</option>
+                            <option value="townhouse">تاون هاوس</option>
+                            <option value="penthouse">بنتهاوس</option>
+                            <option value="land">أراضي</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Transaction Type Filter -->
+                <div class="control-section">
+                    <h4><i class="fas fa-exchange-alt"></i> نوع المعاملة</h4>
+                    <div class="filter-group">
+                        <select id="transactionTypeFilter" onchange="applyFilters()">
+                            <option value="all">الكل</option>
+                            <option value="sale">بيع</option>
+                            <option value="rent">إيجار</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Price Range -->
+                <div class="control-section">
+                    <h4><i class="fas fa-dollar-sign"></i> نطاق السعر</h4>
+                    <div class="filter-group">
+                        <select id="priceRangeFilter" onchange="applyFilters()">
+                            <option value="all">جميع النطاقات</option>
+                            <option value="0-500">أقل من 500 درهم/قدم²</option>
+                            <option value="500-1000">500 - 1,000 درهم/قدم²</option>
+                            <option value="1000-1500">1,000 - 1,500 درهم/قدم²</option>
+                            <option value="1500-2000">1,500 - 2,000 درهم/قدم²</option>
+                            <option value="2000-2500">2,000 - 2,500 درهم/قدم²</option>
+                            <option value="2500+">أكثر من 2,500 درهم/قدم²</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Time Period -->
+                <div class="control-section">
+                    <h4><i class="fas fa-calendar"></i> الفترة الزمنية</h4>
+                    <div class="filter-group">
+                        <select id="timePeriodFilter" onchange="applyFilters()">
+                            <option value="current">الوضع الحالي</option>
+                            <option value="week">آخر أسبوع</option>
+                            <option value="month">آخر شهر</option>
+                            <option value="quarter">آخر ربع سنة</option>
+                            <option value="year">آخر سنة</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Statistics -->
+                <div class="control-section">
+                    <h4><i class="fas fa-chart-bar"></i> إحصائيات سريعة</h4>
+                    <div class="stats-mini">
+                        <div class="stat-mini-card">
+                            <div class="label">إجمالي المعاملات</div>
+                            <div class="value">12,456</div>
+                        </div>
+                        <div class="stat-mini-card">
+                            <div class="label">القيمة الإجمالية</div>
+                            <div class="value">32.5B</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </main>
 
@@ -646,6 +1400,9 @@
         </div>
     </footer>
 
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
     <script>
         // Mobile Menu Toggle
         function toggleMobileMenu() {
@@ -677,6 +1434,469 @@
                     toggleMobileMenu();
                 }
             }
+        });
+
+        // ==================== MAP INITIALIZATION ====================
+        let map;
+        let currentViewMode = 'standard';
+        let areaLayers = [];
+        let markersCluster;
+        let heatmapLayer;
+        let satelliteLayer;
+        let standardLayer;
+
+        // Dubai center coordinates
+        const dubaiCenter = [25.2048, 55.2708];
+
+        // Dubai areas with real estate data
+        const dubaiAreas = [
+            {
+                name: 'دبي مارينا',
+                nameEn: 'Dubai Marina',
+                center: [25.0805, 55.1397],
+                price: 1450,
+                properties: 3250,
+                growth: 12.5,
+                color: '#0066cc',
+                bounds: [
+                    [25.0705, 55.1297],
+                    [25.0905, 55.1497]
+                ]
+            },
+            {
+                name: 'وسط مدينة دبي',
+                nameEn: 'Downtown Dubai',
+                center: [25.1972, 55.2744],
+                price: 2100,
+                properties: 2890,
+                growth: 18.3,
+                color: '#004999',
+                bounds: [
+                    [25.1872, 55.2644],
+                    [25.2072, 55.2844]
+                ]
+            },
+            {
+                name: 'نخلة جميرا',
+                nameEn: 'Palm Jumeirah',
+                center: [25.1124, 55.1390],
+                price: 2850,
+                properties: 1654,
+                growth: 25.1,
+                color: '#6c5ce7',
+                bounds: [
+                    [25.1024, 55.1290],
+                    [25.1224, 55.1490]
+                ]
+            },
+            {
+                name: 'جميرا بيتش ريزيدنس',
+                nameEn: 'JBR',
+                center: [25.0779, 55.1317],
+                price: 1680,
+                properties: 2145,
+                growth: 14.7,
+                color: '#0066cc',
+                bounds: [
+                    [25.0679, 55.1217],
+                    [25.0879, 55.1417]
+                ]
+            },
+            {
+                name: 'الخليج التجاري',
+                nameEn: 'Business Bay',
+                center: [25.1877, 55.2632],
+                price: 1320,
+                properties: 4120,
+                growth: 10.2,
+                color: '#00a0a0',
+                bounds: [
+                    [25.1777, 55.2532],
+                    [25.1977, 55.2732]
+                ]
+            },
+            {
+                name: 'مدينة دبي للإنتاج',
+                nameEn: 'Dubai Production City',
+                center: [25.0458, 55.1725],
+                price: 780,
+                properties: 2890,
+                growth: 8.5,
+                color: '#00b894',
+                bounds: [
+                    [25.0358, 55.1625],
+                    [25.0558, 55.1825]
+                ]
+            },
+            {
+                name: 'مدينة دبي الرياضية',
+                nameEn: 'Dubai Sports City',
+                center: [25.0394, 55.2165],
+                price: 920,
+                properties: 1980,
+                growth: 9.3,
+                color: '#00b894',
+                bounds: [
+                    [25.0294, 55.2065],
+                    [25.0494, 55.2265]
+                ]
+            },
+            {
+                name: 'مدينة جميرا للجولف',
+                nameEn: 'Jumeirah Golf Estates',
+                center: [25.0431, 55.2274],
+                price: 1150,
+                properties: 1456,
+                growth: 11.8,
+                color: '#00a0a0',
+                bounds: [
+                    [25.0331, 55.2174],
+                    [25.0531, 55.2374]
+                ]
+            },
+            {
+                name: 'المدينة العالمية',
+                nameEn: 'International City',
+                center: [25.1706, 55.4104],
+                price: 580,
+                properties: 5240,
+                growth: 6.2,
+                color: '#00b894',
+                bounds: [
+                    [25.1606, 55.4004],
+                    [25.1806, 55.4204]
+                ]
+            },
+            {
+                name: 'ديرة',
+                nameEn: 'Deira',
+                center: [25.2713, 55.3280],
+                price: 890,
+                properties: 3890,
+                growth: 7.5,
+                color: '#00b894',
+                bounds: [
+                    [25.2613, 55.3180],
+                    [25.2813, 55.3380]
+                ]
+            },
+            {
+                name: 'دبي هيلز استيت',
+                nameEn: 'Dubai Hills Estate',
+                center: [25.1048, 55.2451],
+                price: 1580,
+                properties: 2340,
+                growth: 16.5,
+                color: '#0066cc',
+                bounds: [
+                    [25.0948, 55.2351],
+                    [25.1148, 55.2551]
+                ]
+            },
+            {
+                name: 'مدينة محمد بن راشد',
+                nameEn: 'MBR City',
+                center: [25.1485, 55.3129],
+                price: 1420,
+                properties: 1890,
+                growth: 13.2,
+                color: '#00a0a0',
+                bounds: [
+                    [25.1385, 55.3029],
+                    [25.1585, 55.3229]
+                ]
+            }
+        ];
+
+        // Initialize map
+        function initMap() {
+            // Create map
+            map = L.map('map', {
+                center: dubaiCenter,
+                zoom: 11,
+                zoomControl: true,
+                scrollWheelZoom: true,
+                attributionControl: true
+            });
+
+            // Add standard tile layer
+            standardLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 18
+            }).addTo(map);
+
+            // Add satellite tile layer (hidden by default)
+            satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Esri, DigitalGlobe, GeoEye, Earthstar Geographics',
+                maxZoom: 18
+            });
+
+            // Initialize marker cluster group
+            markersCluster = L.markerClusterGroup({
+                maxClusterRadius: 50,
+                spiderfyOnMaxZoom: true,
+                showCoverageOnHover: true,
+                zoomToBoundsOnClick: true
+            });
+
+            // Add area polygons and markers
+            addAreaLayers();
+
+            // Hide loading overlay
+            setTimeout(() => {
+                document.getElementById('loadingOverlay').classList.add('hidden');
+            }, 1000);
+        }
+
+        // Add area layers to map
+        function addAreaLayers() {
+            dubaiAreas.forEach(area => {
+                // Create rectangle for area
+                const bounds = L.latLngBounds(area.bounds[0], area.bounds[1]);
+                const rectangle = L.rectangle(bounds, {
+                    color: area.color,
+                    fillColor: area.color,
+                    fillOpacity: 0.4,
+                    weight: 2
+                });
+
+                // Create popup content
+                const popupContent = `
+                    <div class="popup-content">
+                        <h3>${area.name}</h3>
+                        <div class="popup-stats">
+                            <div class="popup-stat">
+                                <span class="label">متوسط السعر:</span>
+                                <span class="value">${area.price.toLocaleString()} درهم/قدم²</span>
+                            </div>
+                            <div class="popup-stat">
+                                <span class="label">عدد العقارات:</span>
+                                <span class="value">${area.properties.toLocaleString()}</span>
+                            </div>
+                            <div class="popup-stat">
+                                <span class="label">النمو السنوي:</span>
+                                <span class="value" style="color: ${area.growth > 0 ? '#00b894' : '#d63031'}">
+                                    ${area.growth > 0 ? '+' : ''}${area.growth}%
+                                </span>
+                            </div>
+                        </div>
+                        <div class="popup-actions">
+                            <button class="popup-btn popup-btn-primary" onclick="viewAreaDetails('${area.nameEn}')">
+                                عرض التفاصيل
+                            </button>
+                            <button class="popup-btn popup-btn-secondary" onclick="compareArea('${area.nameEn}')">
+                                مقارنة
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                rectangle.bindPopup(popupContent, {
+                    maxWidth: 300,
+                    className: 'custom-popup'
+                });
+
+                // Add hover effect
+                rectangle.on('mouseover', function(e) {
+                    this.setStyle({
+                        fillOpacity: 0.7,
+                        weight: 3
+                    });
+                    updateInfoCard(area);
+                });
+
+                rectangle.on('mouseout', function(e) {
+                    this.setStyle({
+                        fillOpacity: 0.4,
+                        weight: 2
+                    });
+                });
+
+                rectangle.on('click', function(e) {
+                    map.fitBounds(bounds, { padding: [50, 50] });
+                });
+
+                rectangle.addTo(map);
+                areaLayers.push(rectangle);
+
+                // Add marker for cluster view
+                const marker = L.marker(area.center, {
+                    icon: L.divIcon({
+                        className: 'custom-marker',
+                        html: `<div style="background: ${area.color}; color: white; padding: 8px 12px; border-radius: 8px; font-weight: 700; font-size: 12px; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">${area.price.toLocaleString()} درهم</div>`,
+                        iconSize: [80, 40]
+                    })
+                });
+
+                marker.bindPopup(popupContent);
+                markersCluster.addLayer(marker);
+            });
+        }
+
+        // Update info card with area data
+        function updateInfoCard(area) {
+            document.getElementById('selectedArea').textContent = area.name;
+            document.getElementById('avgPrice').textContent = `${area.price.toLocaleString()} درهم/قدم²`;
+            document.getElementById('propertyCount').textContent = area.properties.toLocaleString();
+
+            const growthElement = document.getElementById('growth');
+            growthElement.innerHTML = `<i class="fas fa-arrow-${area.growth > 0 ? 'up' : 'down'}"></i> ${Math.abs(area.growth)}%`;
+            growthElement.className = `trend ${area.growth > 0 ? 'up' : 'down'}`;
+        }
+
+        // Change view mode
+        function changeViewMode(mode) {
+            currentViewMode = mode;
+
+            // Update button states
+            document.querySelectorAll('.view-mode-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`view${mode.charAt(0).toUpperCase() + mode.slice(1)}`).classList.add('active');
+
+            // Clear existing layers
+            areaLayers.forEach(layer => map.removeLayer(layer));
+            map.removeLayer(markersCluster);
+            if (heatmapLayer) map.removeLayer(heatmapLayer);
+
+            if (mode === 'standard') {
+                map.removeLayer(satelliteLayer);
+                standardLayer.addTo(map);
+                areaLayers.forEach(layer => layer.addTo(map));
+            } else if (mode === 'heatmap') {
+                map.removeLayer(satelliteLayer);
+                standardLayer.addTo(map);
+
+                // Create heatmap data
+                const heatData = dubaiAreas.map(area => [
+                    area.center[0],
+                    area.center[1],
+                    area.price / 100 // Intensity based on price
+                ]);
+
+                heatmapLayer = L.heatLayer(heatData, {
+                    radius: 50,
+                    blur: 40,
+                    maxZoom: 13,
+                    gradient: {
+                        0.0: '#00b894',
+                        0.3: '#00a0a0',
+                        0.5: '#0066cc',
+                        0.7: '#004999',
+                        1.0: '#6c5ce7'
+                    }
+                }).addTo(map);
+
+                map.addLayer(markersCluster);
+            } else if (mode === 'satellite') {
+                map.removeLayer(standardLayer);
+                satelliteLayer.addTo(map);
+                map.addLayer(markersCluster);
+            }
+        }
+
+        // Toggle control panel
+        function toggleControlPanel() {
+            const panel = document.getElementById('controlPanel');
+            const toggle = document.querySelector('.control-toggle');
+
+            panel.classList.toggle('collapsed');
+            toggle.classList.toggle('active');
+        }
+
+        // Apply filters
+        function applyFilters() {
+            const propertyType = document.getElementById('propertyTypeFilter').value;
+            const transactionType = document.getElementById('transactionTypeFilter').value;
+            const priceRange = document.getElementById('priceRangeFilter').value;
+            const timePeriod = document.getElementById('timePeriodFilter').value;
+
+            // Filter logic would go here
+            // For demo purposes, we'll just show a message
+            console.log('Filters applied:', { propertyType, transactionType, priceRange, timePeriod });
+        }
+
+        // Search area
+        function searchArea() {
+            const searchTerm = document.getElementById('areaSearch').value.toLowerCase();
+
+            if (!searchTerm) {
+                // Reset all areas
+                areaLayers.forEach(layer => {
+                    layer.setStyle({ fillOpacity: 0.4 });
+                });
+                return;
+            }
+
+            let found = false;
+            areaLayers.forEach((layer, index) => {
+                const area = dubaiAreas[index];
+                if (area.name.toLowerCase().includes(searchTerm) ||
+                    area.nameEn.toLowerCase().includes(searchTerm)) {
+                    layer.setStyle({ fillOpacity: 0.7 });
+                    if (!found) {
+                        map.fitBounds(layer.getBounds(), { padding: [50, 50] });
+                        layer.openPopup();
+                        found = true;
+                    }
+                } else {
+                    layer.setStyle({ fillOpacity: 0.2 });
+                }
+            });
+        }
+
+        // Reset map view
+        function resetMapView() {
+            map.setView(dubaiCenter, 11);
+            document.getElementById('areaSearch').value = '';
+            searchArea();
+        }
+
+        // Toggle fullscreen
+        function toggleFullscreen() {
+            const container = document.querySelector('.map-container');
+            if (!document.fullscreenElement) {
+                container.requestFullscreen().catch(err => {
+                    console.error('Error entering fullscreen:', err);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // Export data
+        function exportData() {
+            const data = dubaiAreas.map(area => ({
+                'المنطقة': area.name,
+                'Area': area.nameEn,
+                'السعر (درهم/قدم²)': area.price,
+                'عدد العقارات': area.properties,
+                'النمو السنوي (%)': area.growth
+            }));
+
+            const csv = [
+                Object.keys(data[0]).join(','),
+                ...data.map(row => Object.values(row).join(','))
+            ].join('\n');
+
+            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'dubai_real_estate_data.csv';
+            link.click();
+        }
+
+        // View area details
+        function viewAreaDetails(areaName) {
+            alert(`عرض تفاصيل منطقة: ${areaName}`);
+        }
+
+        // Compare area
+        function compareArea(areaName) {
+            alert(`مقارنة منطقة: ${areaName}`);
+        }
+
+        // Initialize map when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initMap();
         });
     </script>
 </body>
