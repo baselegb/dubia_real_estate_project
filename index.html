@@ -9,6 +9,9 @@
     <title>دبي العقارية - أسعار العقارات في دبي</title>
     <link href="https://cdn.jsdelivr.net/npm/@fontsource/dubai@5.0.1/index.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
     <style>
         @import url('https://fonts.cdnfonts.com/css/dubai');
 
@@ -623,42 +626,136 @@
             cursor: pointer;
         }
 
-        .map-placeholder {
-            background: linear-gradient(135deg, #e8f4f8 0%, #d4e8ed 100%);
-            border-radius: 16px;
-            height: 500px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+        .map-wrapper {
             position: relative;
+            background: var(--white);
+            border-radius: 16px;
+            height: 600px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.1);
             overflow: hidden;
         }
 
-        .map-placeholder::before {
-            content: '';
+        #homeMap {
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Home Map Info Card */
+        .home-map-info {
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="30" r="3" fill="%230066cc" opacity="0.5"/><circle cx="50" cy="40" r="4" fill="%2300a0a0" opacity="0.6"/><circle cx="70" cy="25" r="3" fill="%230066cc" opacity="0.4"/><circle cx="35" cy="60" r="5" fill="%2300b894" opacity="0.5"/><circle cx="80" cy="55" r="3" fill="%230066cc" opacity="0.5"/><circle cx="45" cy="75" r="4" fill="%2300a0a0" opacity="0.4"/></svg>') center/cover;
-            opacity: 0.3;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 12px 16px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            z-index: 1000;
+            max-width: 280px;
         }
 
-        .map-placeholder i {
-            font-size: 80px;
-            color: var(--primary-blue);
-            margin-bottom: 20px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .map-placeholder p {
-            font-size: 20px;
+        .home-map-info h4 {
+            font-size: 13px;
+            font-weight: 700;
             color: var(--text-dark);
-            position: relative;
-            z-index: 1;
+            margin-bottom: 8px;
+        }
+
+        .home-map-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .home-map-stat {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .home-map-stat .label {
+            color: var(--text-light);
+            font-size: 10px;
+        }
+
+        .home-map-stat .value {
+            font-weight: 700;
+            color: var(--text-dark);
+            font-size: 12px;
+        }
+
+        /* Home Map Legend */
+        .home-map-legend {
+            position: absolute;
+            bottom: 100px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 10px 12px;
+            border-radius: 10px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            z-index: 1000;
+        }
+
+        .home-map-legend h5 {
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+        }
+
+        .home-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 4px;
+            font-size: 10px;
+        }
+
+        .home-legend-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .home-legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            border: 2px solid rgba(0,0,0,0.1);
+            flex-shrink: 0;
+        }
+
+        /* Home Map View All Button */
+        .home-map-cta {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .home-map-cta a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--primary-blue);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 4px 16px rgba(0,102,204,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .home-map-cta a:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,102,204,0.4);
+        }
+
+        .home-map-cta i {
+            font-size: 14px;
         }
 
         /* Trends Section */
@@ -1151,20 +1248,39 @@
                 min-height: 50px;
             }
 
-            .map-placeholder {
-                height: 300px;
+            .map-wrapper {
+                height: 400px;
                 border-radius: 12px;
             }
 
-            .map-placeholder i {
-                font-size: 50px;
-                margin-bottom: 12px;
+            .home-map-info {
+                left: 12px;
+                bottom: 80px;
+                max-width: calc(100% - 24px);
+                padding: 10px 12px;
             }
 
-            .map-placeholder p {
-                font-size: 16px;
-                text-align: center;
-                padding: 0 20px;
+            .home-map-info h4 {
+                font-size: 12px;
+            }
+
+            .home-map-legend {
+                bottom: 140px;
+                left: 12px;
+                padding: 8px 10px;
+            }
+
+            .home-map-legend h5 {
+                font-size: 10px;
+            }
+
+            .home-legend-item {
+                font-size: 9px;
+            }
+
+            .home-map-cta a {
+                padding: 10px 16px;
+                font-size: 12px;
             }
 
             /* Trends Section Mobile */
@@ -1604,9 +1720,57 @@
                     </select>
                 </div>
             </div>
-            <div class="map-placeholder">
-                <i class="fas fa-map-marked-alt"></i>
-                <p>خريطة تفاعلية لأسعار العقارات في دبي</p>
+            <div class="map-wrapper">
+                <!-- Map Element -->
+                <div id="homeMap"></div>
+
+                <!-- View All Button -->
+                <div class="home-map-cta">
+                    <a href="prices-map.html">
+                        <i class="fas fa-expand"></i>
+                        <span>عرض الخريطة الكاملة</span>
+                    </a>
+                </div>
+
+                <!-- Map Info Card -->
+                <div class="home-map-info">
+                    <h4><i class="fas fa-map-marker-alt"></i> <span id="homeSelectedArea">دبي</span></h4>
+                    <div class="home-map-stats">
+                        <div class="home-map-stat">
+                            <span class="label">متوسط السعر</span>
+                            <span class="value" id="homeAvgPrice">1,450 درهم/قدم²</span>
+                        </div>
+                        <div class="home-map-stat">
+                            <span class="label">عدد العقارات</span>
+                            <span class="value" id="homePropertyCount">4,892</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Map Legend -->
+                <div class="home-map-legend">
+                    <h5>دليل الأسعار (درهم/قدم²)</h5>
+                    <div class="home-legend-item">
+                        <div class="home-legend-color" style="background: #00b894;"></div>
+                        <span>500 - 1,000</span>
+                    </div>
+                    <div class="home-legend-item">
+                        <div class="home-legend-color" style="background: #00a0a0;"></div>
+                        <span>1,000 - 1,500</span>
+                    </div>
+                    <div class="home-legend-item">
+                        <div class="home-legend-color" style="background: #0066cc;"></div>
+                        <span>1,500 - 2,000</span>
+                    </div>
+                    <div class="home-legend-item">
+                        <div class="home-legend-color" style="background: #004999;"></div>
+                        <span>2,000 - 2,500</span>
+                    </div>
+                    <div class="home-legend-item">
+                        <div class="home-legend-color" style="background: #6c5ce7;"></div>
+                        <span>2,500+</span>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -1835,6 +1999,166 @@
                 if (menu.classList.contains('active')) {
                     toggleMobileMenu();
                 }
+            }
+        });
+    </script>
+
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    <script>
+        // ==================== HOME MAP INITIALIZATION ====================
+        let homeMap;
+        const dubaiCenter = [25.2048, 55.2708];
+
+        // Dubai areas data
+        const dubaiAreas = [
+            {
+                name: 'دبي مارينا',
+                nameEn: 'Dubai Marina',
+                center: [25.0805, 55.1397],
+                price: 1450,
+                properties: 3250,
+                growth: 12.5,
+                color: '#0066cc',
+                bounds: [[25.0705, 55.1297], [25.0905, 55.1497]]
+            },
+            {
+                name: 'وسط مدينة دبي',
+                nameEn: 'Downtown Dubai',
+                center: [25.1972, 55.2744],
+                price: 2100,
+                properties: 2890,
+                growth: 18.3,
+                color: '#004999',
+                bounds: [[25.1872, 55.2644], [25.2072, 55.2844]]
+            },
+            {
+                name: 'نخلة جميرا',
+                nameEn: 'Palm Jumeirah',
+                center: [25.1124, 55.1390],
+                price: 2850,
+                properties: 1654,
+                growth: 25.1,
+                color: '#6c5ce7',
+                bounds: [[25.1024, 55.1290], [25.1224, 55.1490]]
+            },
+            {
+                name: 'جميرا بيتش ريزيدنس',
+                nameEn: 'JBR',
+                center: [25.0779, 55.1317],
+                price: 1680,
+                properties: 2145,
+                growth: 14.7,
+                color: '#0066cc',
+                bounds: [[25.0679, 55.1217], [25.0879, 55.1417]]
+            },
+            {
+                name: 'الخليج التجاري',
+                nameEn: 'Business Bay',
+                center: [25.1877, 55.2632],
+                price: 1320,
+                properties: 4120,
+                growth: 10.2,
+                color: '#00a0a0',
+                bounds: [[25.1777, 55.2532], [25.1977, 55.2732]]
+            },
+            {
+                name: 'دبي هيلز استيت',
+                nameEn: 'Dubai Hills Estate',
+                center: [25.1048, 55.2451],
+                price: 1580,
+                properties: 2340,
+                growth: 16.5,
+                color: '#0066cc',
+                bounds: [[25.0948, 55.2351], [25.1148, 55.2551]]
+            },
+            {
+                name: 'مدينة محمد بن راشد',
+                nameEn: 'MBR City',
+                center: [25.1485, 55.3129],
+                price: 1420,
+                properties: 1890,
+                growth: 13.2,
+                color: '#00a0a0',
+                bounds: [[25.1385, 55.3029], [25.1585, 55.3229]]
+            },
+            {
+                name: 'ديرة',
+                nameEn: 'Deira',
+                center: [25.2713, 55.3280],
+                price: 890,
+                properties: 3890,
+                growth: 7.5,
+                color: '#00b894',
+                bounds: [[25.2613, 55.3180], [25.2813, 55.3380]]
+            }
+        ];
+
+        // Initialize home map
+        function initHomeMap() {
+            homeMap = L.map('homeMap', {
+                center: dubaiCenter,
+                zoom: 11,
+                zoomControl: true,
+                scrollWheelZoom: false,
+                dragging: true,
+                attributionControl: false
+            });
+
+            // Add tile layer
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap',
+                maxZoom: 18
+            }).addTo(homeMap);
+
+            // Add area polygons
+            dubaiAreas.forEach(area => {
+                const bounds = L.latLngBounds(area.bounds[0], area.bounds[1]);
+                const rectangle = L.rectangle(bounds, {
+                    color: area.color,
+                    fillColor: area.color,
+                    fillOpacity: 0.5,
+                    weight: 2
+                });
+
+                // Create popup
+                const popupContent = `
+                    <div style="font-family: 'Dubai', sans-serif; text-align: center;">
+                        <h4 style="margin: 0 0 10px 0; font-size: 16px; color: #2d3436;">${area.name}</h4>
+                        <p style="margin: 5px 0; font-size: 14px;"><strong>${area.price.toLocaleString()}</strong> درهم/قدم²</p>
+                        <p style="margin: 5px 0; font-size: 13px; color: #636e72;">${area.properties.toLocaleString()} عقار</p>
+                        <a href="prices-map.html" style="display: inline-block; margin-top: 10px; padding: 8px 16px; background: #0066cc; color: white; text-decoration: none; border-radius: 6px; font-size: 12px;">عرض التفاصيل</a>
+                    </div>
+                `;
+
+                rectangle.bindPopup(popupContent);
+
+                // Hover effect
+                rectangle.on('mouseover', function() {
+                    this.setStyle({ fillOpacity: 0.7, weight: 3 });
+                    updateHomeMapInfo(area);
+                });
+
+                rectangle.on('mouseout', function() {
+                    this.setStyle({ fillOpacity: 0.5, weight: 2 });
+                });
+
+                rectangle.addTo(homeMap);
+            });
+        }
+
+        // Update home map info card
+        function updateHomeMapInfo(area) {
+            document.getElementById('homeSelectedArea').textContent = area.name;
+            document.getElementById('homeAvgPrice').textContent = `${area.price.toLocaleString()} درهم/قدم²`;
+            document.getElementById('homePropertyCount').textContent = area.properties.toLocaleString();
+        }
+
+        // Initialize map when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            if (document.getElementById('homeMap')) {
+                setTimeout(initHomeMap, 500);
             }
         });
     </script>
