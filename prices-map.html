@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0066cc">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>خريطة الأسعار - دبي العقارية</title>
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/dubai@5.0.1/index.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.cdnfonts.com/css/dubai');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary-blue: #0066cc;
+            --primary-dark: #004999;
+            --accent-teal: #00a0a0;
+            --bg-light: #f5f7fa;
+            --bg-dark: #1a1f36;
+            --text-dark: #2d3436;
+            --text-light: #636e72;
+            --white: #ffffff;
+            --border-color: #e0e6ed;
+            --success-green: #00b894;
+            --warning-orange: #fdcb6e;
+            --danger-red: #d63031;
+            --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Dubai', sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            min-height: 100vh;
+            direction: rtl;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 60px;
+            background: var(--white);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-teal));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 35px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-dark);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary-blue);
+        }
+
+        .nav-links a i {
+            font-size: 14px;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .btn-primary {
+            background: var(--primary-blue);
+            color: white;
+            padding: 10px 24px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Dubai', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            width: 44px;
+            height: 44px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            z-index: 1001;
+        }
+
+        .hamburger {
+            width: 24px;
+            height: 2px;
+            background: var(--text-dark);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger::before,
+        .hamburger::after {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 2px;
+            background: var(--text-dark);
+            transition: all 0.3s ease;
+        }
+
+        .hamburger::before {
+            top: -8px;
+        }
+
+        .hamburger::after {
+            top: 8px;
+        }
+
+        .mobile-menu-btn.active .hamburger {
+            background: transparent;
+        }
+
+        .mobile-menu-btn.active .hamburger::before {
+            top: 0;
+            transform: rotate(45deg);
+        }
+
+        .mobile-menu-btn.active .hamburger::after {
+            top: 0;
+            transform: rotate(-45deg);
+        }
+
+        /* Mobile Slide Menu */
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 85%;
+            max-width: 320px;
+            height: 100vh;
+            background: var(--white);
+            z-index: 999;
+            transition: right 0.3s ease;
+            box-shadow: -5px 0 20px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            visibility: hidden;
+        }
+
+        .mobile-menu.active {
+            right: 0;
+            visibility: visible;
+        }
+
+        .mobile-menu-header {
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-teal));
+            color: white;
+        }
+
+        .mobile-menu-header h3 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .mobile-menu-header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .mobile-menu-links {
+            padding: 20px 0;
+            list-style: none;
+        }
+
+        .mobile-menu-links a {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 16px 24px;
+            color: var(--text-dark);
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .mobile-menu-links a:active,
+        .mobile-menu-links a.active {
+            background: var(--bg-light);
+        }
+
+        .mobile-menu-links a i {
+            width: 24px;
+            color: var(--primary-blue);
+            font-size: 18px;
+        }
+
+        .mobile-menu-cta {
+            padding: 20px;
+        }
+
+        .mobile-menu-cta .btn-primary {
+            width: 100%;
+            padding: 16px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        /* Mobile Menu Overlay */
+        .mobile-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .mobile-overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        /* Bottom Navigation (Mobile) */
+        .bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            box-shadow: 0 -2px 20px rgba(0,0,0,0.1);
+            z-index: 100;
+            padding-bottom: var(--safe-area-bottom);
+        }
+
+        .bottom-nav-items {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 8px 0;
+        }
+
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 16px;
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            min-width: 64px;
+        }
+
+        .bottom-nav-item i {
+            font-size: 20px;
+            transition: transform 0.2s ease;
+        }
+
+        .bottom-nav-item.active,
+        .bottom-nav-item:active {
+            color: var(--primary-blue);
+        }
+
+        .bottom-nav-item:active i {
+            transform: scale(1.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 100px 60px 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+            min-height: calc(100vh - 200px);
+        }
+
+        .page-header {
+            margin-bottom: 40px;
+        }
+
+        .page-header h1 {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        .page-header p {
+            font-size: 18px;
+            color: var(--text-light);
+        }
+
+        /* Footer */
+        footer {
+            background: #0d1117;
+            color: white;
+            padding: 60px;
+        }
+
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 50px;
+        }
+
+        .footer-brand h3 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--primary-blue);
+        }
+
+        .footer-brand p {
+            opacity: 0.7;
+            font-size: 14px;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 15px;
+        }
+
+        .footer-social a {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .footer-social a:hover {
+            background: var(--primary-blue);
+        }
+
+        .footer-links h4 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-blue);
+        }
+
+        .footer-bottom {
+            max-width: 1400px;
+            margin: 40px auto 0;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding-bottom: 70px;
+            }
+
+            .top-nav {
+                padding: 12px 16px;
+            }
+
+            .nav-links, .nav-actions {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .bottom-nav {
+                display: block;
+            }
+
+            .logo {
+                font-size: 18px;
+                gap: 8px;
+            }
+
+            .logo-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 14px;
+            }
+
+            .main-content {
+                padding: 80px 16px 32px;
+            }
+
+            .page-header h1 {
+                font-size: 26px;
+            }
+
+            .page-header p {
+                font-size: 15px;
+            }
+
+            footer {
+                padding: 40px 16px 100px;
+            }
+
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+                margin-top: 32px;
+                padding-top: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="top-nav">
+        <a href="index.html" class="logo">
+            <div class="logo-icon">
+                <i class="fas fa-building"></i>
+            </div>
+            <span>دبي العقارية</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="index.html"><i class="fas fa-chart-line"></i> اتجاهات السوق</a></li>
+            <li><a href="prices-map.html" class="active"><i class="fas fa-map-marked-alt"></i> خريطة الأسعار</a></li>
+            <li><a href="#"><i class="fas fa-search-dollar"></i> تحليل المناطق</a></li>
+            <li><a href="#"><i class="fas fa-file-alt"></i> تقارير</a></li>
+            <li><a href="#"><i class="fas fa-question-circle"></i> المساعدة</a></li>
+        </ul>
+        <div class="nav-actions">
+            <button class="btn-primary">
+                <i class="fas fa-download"></i> تحميل التطبيق
+            </button>
+        </div>
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+            <span class="hamburger"></span>
+        </button>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-overlay" onclick="toggleMobileMenu()"></div>
+
+    <!-- Mobile Slide Menu -->
+    <div class="mobile-menu">
+        <div class="mobile-menu-header">
+            <h3>دبي العقارية</h3>
+            <p>منصة بيانات السوق العقاري</p>
+        </div>
+        <ul class="mobile-menu-links">
+            <li><a href="index.html" onclick="toggleMobileMenu()"><i class="fas fa-home"></i> الرئيسية</a></li>
+            <li><a href="index.html" onclick="toggleMobileMenu()"><i class="fas fa-chart-line"></i> اتجاهات السوق</a></li>
+            <li><a href="prices-map.html" class="active" onclick="toggleMobileMenu()"><i class="fas fa-map-marked-alt"></i> خريطة الأسعار</a></li>
+            <li><a href="#" onclick="toggleMobileMenu()"><i class="fas fa-search-dollar"></i> تحليل المناطق</a></li>
+            <li><a href="#" onclick="toggleMobileMenu()"><i class="fas fa-file-alt"></i> التقارير</a></li>
+            <li><a href="#" onclick="toggleMobileMenu()"><i class="fas fa-question-circle"></i> المساعدة</a></li>
+            <li><a href="#" onclick="toggleMobileMenu()"><i class="fas fa-envelope"></i> اتصل بنا</a></li>
+        </ul>
+        <div class="mobile-menu-cta">
+            <button class="btn-primary">
+                <i class="fas fa-download"></i> تحميل التطبيق
+            </button>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation (Mobile) -->
+    <div class="bottom-nav">
+        <div class="bottom-nav-items">
+            <a href="index.html" class="bottom-nav-item">
+                <i class="fas fa-home"></i>
+                <span>الرئيسية</span>
+            </a>
+            <a href="index.html" class="bottom-nav-item">
+                <i class="fas fa-chart-line"></i>
+                <span>الاتجاهات</span>
+            </a>
+            <a href="prices-map.html" class="bottom-nav-item active">
+                <i class="fas fa-map-marked-alt"></i>
+                <span>الخريطة</span>
+            </a>
+            <a href="#" class="bottom-nav-item">
+                <i class="fas fa-search"></i>
+                <span>البحث</span>
+            </a>
+            <a href="#" class="bottom-nav-item">
+                <i class="fas fa-user"></i>
+                <span>حسابي</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="page-header">
+            <h1>خريطة أسعار العقارات</h1>
+            <p>خريطة تفاعلية لأسعار العقارات في جميع مناطق دبي</p>
+        </div>
+
+        <!-- Map content will be added here -->
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-brand">
+                <h3>دبي العقارية</h3>
+                <p>منصتك الشاملة لاستكشاف سوق العقارات في دبي. نوفر لك بيانات موثوقة وتحليلات متعمقة لمساعدتك في اتخاذ أفضل القرارات الاستثمارية.</p>
+                <div class="footer-social">
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h4>روابط سريعة</h4>
+                <ul>
+                    <li><a href="index.html">الرئيسية</a></li>
+                    <li><a href="index.html">اتجاهات السوق</a></li>
+                    <li><a href="prices-map.html">خريطة الأسعار</a></li>
+                    <li><a href="#">تحليل المناطق</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>الموارد</h4>
+                <ul>
+                    <li><a href="#">التقارير</a></li>
+                    <li><a href="#">الأسئلة الشائعة</a></li>
+                    <li><a href="#">دليل المستثمر</a></li>
+                    <li><a href="#">المدونة</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>تواصل معنا</h4>
+                <ul>
+                    <li><a href="#">اتصل بنا</a></li>
+                    <li><a href="#">الدعم الفني</a></li>
+                    <li><a href="#">الشراكات</a></li>
+                    <li><a href="#">الوظائف</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© ٢٠٢٦ دبي العقارية. جميع الحقوق محفوظة.</p>
+            <p>سياسة الخصوصية | الشروط والأحكام</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const btn = document.querySelector('.mobile-menu-btn');
+            const menu = document.querySelector('.mobile-menu');
+            const overlay = document.querySelector('.mobile-overlay');
+
+            btn.classList.toggle('active');
+            menu.classList.toggle('active');
+            overlay.classList.toggle('active');
+
+            // Prevent body scroll when menu is open
+            document.body.style.overflow = menu.classList.contains('active') ? 'hidden' : '';
+        }
+
+        // Bottom Navigation Active State
+        document.querySelectorAll('.bottom-nav-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                document.querySelectorAll('.bottom-nav-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Close mobile menu on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const menu = document.querySelector('.mobile-menu');
+                if (menu.classList.contains('active')) {
+                    toggleMobileMenu();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
