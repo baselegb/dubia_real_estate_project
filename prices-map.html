@@ -470,49 +470,59 @@
             position: absolute;
             top: 20px;
             right: 20px;
-            background: var(--white);
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
             border-radius: 16px;
-            padding: 24px;
-            width: 320px;
+            padding: 20px;
+            width: 300px;
             max-height: calc(100vh - 260px);
             overflow-y: auto;
             box-shadow: 0 8px 32px rgba(0,0,0,0.15);
             z-index: 1000;
             transition: transform 0.3s ease, opacity 0.3s ease;
-        }
-
-        .control-panel.collapsed {
             transform: translateX(calc(100% + 20px));
             opacity: 0;
             pointer-events: none;
+        }
+
+        .control-panel.active {
+            transform: translateX(0);
+            opacity: 1;
+            pointer-events: auto;
         }
 
         .control-toggle {
             position: absolute;
             top: 20px;
             right: 20px;
-            width: 44px;
-            height: 44px;
-            background: var(--white);
+            width: 48px;
+            height: 48px;
+            background: var(--primary-blue);
+            color: white;
             border: none;
             border-radius: 12px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 16px rgba(0,102,204,0.3);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 999;
+            z-index: 1001;
             transition: all 0.3s ease;
         }
 
         .control-toggle:hover {
-            background: var(--primary-blue);
-            color: white;
+            background: var(--primary-dark);
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,102,204,0.4);
         }
 
         .control-toggle i {
-            font-size: 18px;
+            font-size: 20px;
             transition: transform 0.3s ease;
+        }
+
+        .control-toggle.active {
+            background: var(--danger-red);
         }
 
         .control-toggle.active i {
@@ -520,40 +530,40 @@
         }
 
         .control-header {
-            margin-bottom: 20px;
-            padding-bottom: 16px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
             border-bottom: 2px solid var(--border-color);
         }
 
         .control-header h3 {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 700;
             color: var(--text-dark);
-            margin-bottom: 4px;
+            margin-bottom: 3px;
         }
 
         .control-header p {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text-light);
         }
 
         .control-section {
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         .control-section h4 {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             color: var(--text-dark);
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .control-section h4 i {
             color: var(--primary-blue);
-            font-size: 16px;
+            font-size: 14px;
         }
 
         /* Search Input */
@@ -678,53 +688,54 @@
         .stats-mini {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-top: 16px;
+            gap: 10px;
+            margin-top: 12px;
         }
 
         .stat-mini-card {
             background: linear-gradient(135deg, var(--primary-blue), var(--accent-teal));
-            padding: 16px;
-            border-radius: 12px;
+            padding: 12px;
+            border-radius: 10px;
             color: white;
         }
 
         .stat-mini-card .label {
-            font-size: 11px;
+            font-size: 10px;
             opacity: 0.9;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
         }
 
         .stat-mini-card .value {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 700;
         }
 
         /* Map Legend */
         .map-legend {
             position: absolute;
-            bottom: 30px;
+            bottom: 120px;
             left: 20px;
-            background: var(--white);
-            padding: 16px;
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 10px 12px;
+            border-radius: 10px;
             box-shadow: 0 4px 16px rgba(0,0,0,0.15);
             z-index: 1000;
         }
 
         .map-legend h4 {
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 700;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             color: var(--text-dark);
         }
 
         .legend-item {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 8px;
-            font-size: 12px;
+            gap: 8px;
+            margin-bottom: 6px;
+            font-size: 11px;
         }
 
         .legend-item:last-child {
@@ -732,60 +743,67 @@
         }
 
         .legend-color {
-            width: 24px;
-            height: 24px;
-            border-radius: 6px;
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
             border: 2px solid rgba(0,0,0,0.1);
+            flex-shrink: 0;
         }
 
         /* Info Cards on Map */
         .info-card {
             position: absolute;
-            top: 20px;
+            bottom: 30px;
             left: 20px;
-            background: var(--white);
-            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 12px 16px;
             border-radius: 12px;
             box-shadow: 0 4px 16px rgba(0,0,0,0.15);
             z-index: 1000;
-            min-width: 280px;
+            max-width: 300px;
+            transition: all 0.3s ease;
         }
 
         .info-card h3 {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 700;
             color: var(--text-dark);
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
 
         .info-stats {
             display: grid;
-            gap: 10px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
         }
 
         .info-stat {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 13px;
+            flex-direction: column;
+            gap: 2px;
+            font-size: 11px;
         }
 
         .info-stat .label {
             color: var(--text-light);
+            font-size: 10px;
         }
 
         .info-stat .value {
             font-weight: 700;
             color: var(--text-dark);
+            font-size: 13px;
         }
 
         .info-stat .trend {
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            font-size: 12px;
-            padding: 2px 8px;
-            border-radius: 12px;
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-weight: 700;
         }
 
         .info-stat .trend.up {
@@ -802,20 +820,21 @@
         .map-controls {
             position: absolute;
             top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
+            left: 20px;
             display: flex;
-            gap: 12px;
+            flex-direction: column;
+            gap: 8px;
             z-index: 1000;
         }
 
         .map-control-btn {
-            background: var(--white);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
             border: none;
-            padding: 10px 20px;
+            padding: 10px 14px;
             border-radius: 10px;
             font-family: 'Dubai', sans-serif;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             cursor: pointer;
             box-shadow: 0 2px 12px rgba(0,0,0,0.1);
@@ -823,12 +842,13 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            white-space: nowrap;
         }
 
         .map-control-btn:hover {
             background: var(--primary-blue);
             color: white;
-            transform: translateY(-2px);
+            transform: translateX(4px);
             box-shadow: 0 4px 16px rgba(0,0,0,0.15);
         }
 
@@ -1026,18 +1046,24 @@
 
             .control-panel {
                 top: auto;
-                bottom: 0;
+                bottom: -100%;
                 right: 0;
                 left: 0;
                 width: 100%;
-                max-height: 60vh;
+                max-height: 70vh;
                 border-radius: 20px 20px 0 0;
-                padding: 20px 16px;
+                padding: 20px 16px 32px;
+                transform: translateY(0);
+            }
+
+            .control-panel.active {
+                bottom: 0;
+                transform: translateY(0);
             }
 
             .control-toggle {
                 top: auto;
-                bottom: 16px;
+                bottom: 80px;
                 right: 16px;
                 width: 56px;
                 height: 56px;
@@ -1046,30 +1072,60 @@
 
             .info-card {
                 left: 12px;
-                top: 12px;
-                min-width: calc(100% - 24px);
-                padding: 16px;
+                bottom: 100px;
+                max-width: calc(100% - 84px);
+                padding: 10px 12px;
+            }
+
+            .info-card h3 {
+                font-size: 12px;
+                margin-bottom: 6px;
+            }
+
+            .info-stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 6px;
+            }
+
+            .info-stat .value {
+                font-size: 12px;
             }
 
             .map-legend {
-                bottom: 90px;
+                bottom: 170px;
                 left: 12px;
-                right: 12px;
-                padding: 12px;
+                padding: 8px 10px;
+            }
+
+            .map-legend h4 {
+                font-size: 11px;
+                margin-bottom: 6px;
             }
 
             .legend-item {
-                font-size: 11px;
+                font-size: 10px;
+                margin-bottom: 4px;
+                gap: 6px;
+            }
+
+            .legend-color {
+                width: 16px;
+                height: 16px;
             }
 
             .map-controls {
                 top: 12px;
-                flex-wrap: wrap;
-                gap: 8px;
+                left: 12px;
+                gap: 6px;
             }
 
             .map-control-btn {
-                padding: 8px 12px;
+                padding: 8px 10px;
+                font-size: 11px;
+                gap: 6px;
+            }
+
+            .map-control-btn i {
                 font-size: 12px;
             }
 
@@ -1189,22 +1245,22 @@
 
             <!-- Info Card -->
             <div class="info-card" id="infoCard">
-                <h3>معلومات المنطقة</h3>
+                <h3><i class="fas fa-map-marker-alt"></i> <span id="selectedArea">دبي</span></h3>
                 <div class="info-stats">
                     <div class="info-stat">
-                        <span class="label">المنطقة المختارة:</span>
-                        <span class="value" id="selectedArea">دبي</span>
-                    </div>
-                    <div class="info-stat">
-                        <span class="label">متوسط السعر:</span>
+                        <span class="label">متوسط السعر</span>
                         <span class="value" id="avgPrice">1,450 درهم/قدم²</span>
                     </div>
                     <div class="info-stat">
-                        <span class="label">عدد العقارات:</span>
+                        <span class="label">عدد العقارات</span>
                         <span class="value" id="propertyCount">4,892</span>
                     </div>
                     <div class="info-stat">
-                        <span class="label">النمو السنوي:</span>
+                        <span class="label">نوع العقار</span>
+                        <span class="value">جميع الأنواع</span>
+                    </div>
+                    <div class="info-stat">
+                        <span class="label">النمو السنوي</span>
                         <span class="trend up" id="growth">
                             <i class="fas fa-arrow-up"></i> 15.2%
                         </span>
@@ -1798,7 +1854,7 @@
             const panel = document.getElementById('controlPanel');
             const toggle = document.querySelector('.control-toggle');
 
-            panel.classList.toggle('collapsed');
+            panel.classList.toggle('active');
             toggle.classList.toggle('active');
         }
 
