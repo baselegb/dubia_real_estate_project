@@ -1165,6 +1165,147 @@
             color: white;
         }
 
+        /* Area Labels */
+        .area-label {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(245, 247, 250, 0.98));
+            backdrop-filter: blur(10px);
+            padding: 8px 12px;
+            border-radius: 10px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.5) inset;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-dark);
+            white-space: nowrap;
+            border: 2px solid;
+            position: relative;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .area-label:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+        }
+
+        .area-label .label-name {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 3px;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+        }
+
+        .area-label .label-price {
+            display: block;
+            font-size: 14px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .area-label-icon {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-teal));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 11px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        /* Highlighted Area Effect */
+        .leaflet-interactive.highlighted {
+            stroke-width: 4;
+            stroke-dasharray: 10, 5;
+            animation: dash 20s linear infinite, glow 2s ease-in-out infinite;
+        }
+
+        @keyframes dash {
+            to {
+                stroke-dashoffset: -100;
+            }
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                filter: drop-shadow(0 0 8px currentColor);
+            }
+            50% {
+                filter: drop-shadow(0 0 16px currentColor);
+            }
+        }
+
+        /* Price Badge */
+        .price-badge {
+            background: linear-gradient(135deg, rgba(0,102,204,0.95), rgba(0,160,160,0.95));
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            position: relative;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .price-badge::before {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid rgba(0,160,160,0.95);
+        }
+
+        /* Area Pattern Overlays */
+        .pattern-luxury {
+            background-image: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255,255,255,0.1) 10px,
+                rgba(255,255,255,0.1) 20px
+            );
+        }
+
+        .pattern-premium {
+            background-image: radial-gradient(
+                circle at 10px 10px,
+                rgba(255,255,255,0.15) 2px,
+                transparent 2px
+            );
+            background-size: 20px 20px;
+        }
+
+        .pattern-standard {
+            background-image: linear-gradient(
+                90deg,
+                rgba(255,255,255,0.05) 1px,
+                transparent 1px
+            );
+            background-size: 10px 10px;
+        }
+
         /* Leaflet Popup Customization */
         .leaflet-popup-content-wrapper {
             border-radius: 12px;
@@ -1478,6 +1619,30 @@
             .help-key {
                 font-size: 10px;
                 min-width: 50px;
+            }
+
+            .area-label {
+                font-size: 9px;
+                padding: 6px 8px;
+            }
+
+            .area-label .label-name {
+                font-size: 10px;
+            }
+
+            .area-label .label-price {
+                font-size: 11px;
+            }
+
+            .area-label-icon {
+                width: 20px;
+                height: 20px;
+                font-size: 9px;
+            }
+
+            .price-badge {
+                font-size: 9px;
+                padding: 4px 8px;
             }
         }
     </style>
@@ -1929,6 +2094,8 @@
         let map;
         let currentViewMode = 'standard';
         let areaLayers = [];
+        let areaLabels = [];
+        let currentHighlightedArea = null;
         let markersCluster;
         let heatmapLayer;
         let satelliteLayer;
@@ -2097,6 +2264,36 @@
             }
         ];
 
+        // Get icon for area based on landmarks or category
+        function getAreaIcon(price) {
+            if (price > 2500) {
+                return '<i class="fas fa-crown"></i>'; // Luxury
+            } else if (price > 2000) {
+                return '<i class="fas fa-gem"></i>'; // Premium
+            } else if (price > 1500) {
+                return '<i class="fas fa-star"></i>'; // High-end
+            } else if (price > 1000) {
+                return '<i class="fas fa-building"></i>'; // Mid-range
+            } else {
+                return '<i class="fas fa-home"></i>'; // Affordable
+            }
+        }
+
+        // Get area by landmark
+        function getAreaLandmarkIcon(areaNameEn) {
+            const landmarks = {
+                'Dubai Marina': '<i class="fas fa-ship"></i>',
+                'Downtown Dubai': '<i class="fas fa-city"></i>',
+                'Palm Jumeirah': '<i class="fas fa-umbrella-beach"></i>',
+                'JBR': '<i class="fas fa-water"></i>',
+                'Business Bay': '<i class="fas fa-briefcase"></i>',
+                'Dubai Hills Estate': '<i class="fas fa-tree"></i>',
+                'MBR City': '<i class="fas fa-landmark"></i>',
+                'Deira': '<i class="fas fa-store"></i>'
+            };
+            return landmarks[areaNameEn] || null;
+        }
+
         // Initialize map
         function initMap() {
             // Create map
@@ -2142,11 +2339,21 @@
             dubaiAreas.forEach(area => {
                 // Create rectangle for area
                 const bounds = L.latLngBounds(area.bounds[0], area.bounds[1]);
+
+                // Determine pattern class based on price
+                let patternClass = 'pattern-standard';
+                if (area.price > 2000) {
+                    patternClass = 'pattern-luxury';
+                } else if (area.price > 1500) {
+                    patternClass = 'pattern-premium';
+                }
+
                 const rectangle = L.rectangle(bounds, {
                     color: area.color,
                     fillColor: area.color,
                     fillOpacity: 0.4,
-                    weight: 2
+                    weight: 2,
+                    className: patternClass
                 });
 
                 // Create popup content
@@ -2189,8 +2396,10 @@
                 rectangle.on('mouseover', function(e) {
                     this.setStyle({
                         fillOpacity: 0.7,
-                        weight: 3
+                        weight: 4
                     });
+                    // Add highlighted class for animation
+                    this.getElement().classList.add('highlighted');
                     updateInfoCard(area);
                 });
 
@@ -2199,14 +2408,72 @@
                         fillOpacity: 0.4,
                         weight: 2
                     });
+                    // Remove highlighted class
+                    this.getElement().classList.remove('highlighted');
                 });
 
                 rectangle.on('click', function(e) {
+                    const areaIndex = dubaiAreas.findIndex(a => a.nameEn === area.nameEn);
+                    highlightArea(areaIndex);
                     map.fitBounds(bounds, { padding: [50, 50] });
                 });
 
                 rectangle.addTo(map);
                 areaLayers.push(rectangle);
+
+                // Add permanent area label
+                const landmarkIcon = getAreaLandmarkIcon(area.nameEn);
+                const priceIcon = getAreaIcon(area.price);
+                const icon = landmarkIcon || priceIcon;
+                const labelHtml = `
+                    <div class="area-label" style="border-color: ${area.color};">
+                        ${icon ? `<div class="area-label-icon">${icon}</div>` : ''}
+                        <span class="label-name">${area.name}</span>
+                        <span class="label-price">${area.price.toLocaleString()} د.إ</span>
+                    </div>
+                `;
+
+                const label = L.marker(area.center, {
+                    icon: L.divIcon({
+                        className: 'area-label-marker',
+                        html: labelHtml,
+                        iconSize: [120, 50],
+                        iconAnchor: [60, 25]
+                    }),
+                    zIndexOffset: 1000
+                }).addTo(map);
+
+                // Store label reference
+                areaLabels.push(label);
+
+                // Add price badge that appears on hover
+                const priceBadgeHtml = `
+                    <div class="price-badge">
+                        ${area.properties.toLocaleString()} عقار
+                    </div>
+                `;
+
+                let priceBadge = null;
+                rectangle.on('mouseover', function() {
+                    if (!priceBadge) {
+                        priceBadge = L.marker([area.center[0] - 0.008, area.center[1]], {
+                            icon: L.divIcon({
+                                className: 'price-badge-marker',
+                                html: priceBadgeHtml,
+                                iconSize: [80, 30],
+                                iconAnchor: [40, 15]
+                            }),
+                            zIndexOffset: 1001
+                        }).addTo(map);
+                    }
+                });
+
+                rectangle.on('mouseout', function() {
+                    if (priceBadge) {
+                        map.removeLayer(priceBadge);
+                        priceBadge = null;
+                    }
+                });
 
                 // Add marker for cluster view
                 const marker = L.marker(area.center, {
@@ -2241,10 +2508,18 @@
             document.querySelectorAll('.view-mode-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`view${mode.charAt(0).toUpperCase() + mode.slice(1)}`).classList.add('active');
 
-            // Clear existing layers
+            // Clear existing layers (but keep labels)
             areaLayers.forEach(layer => map.removeLayer(layer));
             map.removeLayer(markersCluster);
             if (heatmapLayer) map.removeLayer(heatmapLayer);
+
+            // Toggle area labels visibility
+            const labels = document.querySelectorAll('.area-label-marker');
+            if (mode === 'heatmap') {
+                labels.forEach(label => label.style.opacity = '0.5');
+            } else {
+                labels.forEach(label => label.style.opacity = '1');
+            }
 
             if (mode === 'standard') {
                 map.removeLayer(satelliteLayer);
@@ -2337,6 +2612,14 @@
             map.setView(dubaiCenter, 11);
             document.getElementById('areaSearch').value = '';
             searchArea();
+
+            // Clear highlights
+            highlightArea(null);
+
+            // Clear quick access active states
+            document.querySelectorAll('.quick-area-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
         }
 
         // Toggle fullscreen
@@ -2389,6 +2672,47 @@
             legend.classList.toggle('minimized');
         }
 
+        // Highlight area persistently
+        function highlightArea(areaIndex) {
+            // Remove previous highlight
+            if (currentHighlightedArea !== null && areaLayers[currentHighlightedArea]) {
+                const prevLayer = areaLayers[currentHighlightedArea];
+                prevLayer.setStyle({
+                    fillOpacity: 0.4,
+                    weight: 2
+                });
+                if (prevLayer.getElement()) {
+                    prevLayer.getElement().classList.remove('highlighted');
+                }
+            }
+
+            // Add new highlight
+            if (areaIndex !== null && areaLayers[areaIndex]) {
+                const layer = areaLayers[areaIndex];
+                layer.setStyle({
+                    fillOpacity: 0.7,
+                    weight: 4
+                });
+                if (layer.getElement()) {
+                    layer.getElement().classList.add('highlighted');
+                }
+                currentHighlightedArea = areaIndex;
+
+                // Pulse the label
+                if (areaLabels[areaIndex]) {
+                    const labelElement = areaLabels[areaIndex].getElement();
+                    if (labelElement) {
+                        labelElement.querySelector('.area-label').style.animation = 'pulse 0.5s ease-in-out';
+                        setTimeout(() => {
+                            if (labelElement.querySelector('.area-label')) {
+                                labelElement.querySelector('.area-label').style.animation = '';
+                            }
+                        }, 500);
+                    }
+                }
+            }
+        }
+
         // Zoom to specific area
         function zoomToArea(areaNameEn) {
             const area = dubaiAreas.find(a => a.nameEn === areaNameEn);
@@ -2398,8 +2722,11 @@
 
                 // Find and highlight the area
                 const areaIndex = dubaiAreas.findIndex(a => a.nameEn === areaNameEn);
-                if (areaIndex !== -1 && areaLayers[areaIndex]) {
-                    areaLayers[areaIndex].openPopup();
+                if (areaIndex !== -1) {
+                    highlightArea(areaIndex);
+                    if (areaLayers[areaIndex]) {
+                        areaLayers[areaIndex].openPopup();
+                    }
                     updateInfoCard(area);
                 }
 
