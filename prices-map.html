@@ -1306,6 +1306,503 @@
             background-size: 10px 10px;
         }
 
+        /* Property Markers (Madlan Style) */
+        .property-marker {
+            background: white;
+            border: 2px solid var(--primary-blue);
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--primary-blue);
+            box-shadow: 0 3px 12px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            position: relative;
+        }
+
+        .property-marker:hover {
+            background: var(--primary-blue);
+            color: white;
+            transform: scale(1.1) translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,102,204,0.4);
+            z-index: 1000;
+        }
+
+        .property-marker.featured {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            border-color: #ffa500;
+            color: #d97706;
+            animation: shimmer 2s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% {
+                box-shadow: 0 3px 12px rgba(255,215,0,0.3);
+            }
+            50% {
+                box-shadow: 0 6px 24px rgba(255,215,0,0.6);
+            }
+        }
+
+        .property-marker.new {
+            position: relative;
+        }
+
+        .property-marker.new::after {
+            content: 'جديد';
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ef4444;
+            color: white;
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        /* Property Preview Card (Hover) */
+        .property-preview {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-10px);
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            width: 280px;
+            overflow: hidden;
+            pointer-events: none;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 10000;
+            margin-bottom: 10px;
+        }
+
+        .property-marker:hover .property-preview {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+            pointer-events: auto;
+        }
+
+        .property-preview-image {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            position: relative;
+        }
+
+        .property-preview-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .property-preview-content {
+            padding: 12px;
+        }
+
+        .property-preview-price {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 6px;
+        }
+
+        .property-preview-details {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 8px;
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .property-preview-detail {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .property-preview-location {
+            font-size: 12px;
+            color: var(--text-dark);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .property-preview-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .property-preview-btn {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 6px;
+            font-family: 'Dubai', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .property-preview-btn-primary {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .property-preview-btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .property-preview-btn-secondary {
+            background: var(--bg-light);
+            color: var(--text-dark);
+        }
+
+        .property-preview-btn-secondary:hover {
+            background: var(--border-color);
+        }
+
+        /* Property Details Sidebar */
+        .property-sidebar {
+            position: absolute;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100%;
+            background: white;
+            box-shadow: -4px 0 24px rgba(0,0,0,0.15);
+            z-index: 2000;
+            overflow-y: auto;
+            transition: right 0.3s ease;
+        }
+
+        .property-sidebar.open {
+            right: 0;
+        }
+
+        .property-sidebar-close {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            width: 36px;
+            height: 36px;
+            background: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            z-index: 10;
+            transition: all 0.2s ease;
+        }
+
+        .property-sidebar-close:hover {
+            background: var(--primary-blue);
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        .property-sidebar-gallery {
+            position: relative;
+            height: 300px;
+            overflow: hidden;
+        }
+
+        .property-sidebar-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .property-sidebar-nav {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 6px;
+        }
+
+        .property-sidebar-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .property-sidebar-dot.active {
+            background: white;
+            width: 24px;
+            border-radius: 4px;
+        }
+
+        .property-sidebar-content {
+            padding: 20px;
+        }
+
+        .property-sidebar-header {
+            margin-bottom: 20px;
+        }
+
+        .property-sidebar-price {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 8px;
+        }
+
+        .property-sidebar-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .property-sidebar-location {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        .property-sidebar-features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+            padding: 20px 0;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .property-sidebar-feature {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .property-sidebar-feature-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-blue);
+            font-size: 18px;
+        }
+
+        .property-sidebar-feature-label {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+
+        .property-sidebar-feature-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .property-sidebar-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .property-sidebar-btn {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Dubai', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .property-sidebar-btn-primary {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .property-sidebar-btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .property-sidebar-btn-secondary {
+            background: white;
+            color: var(--text-dark);
+            border: 2px solid var(--border-color);
+        }
+
+        .property-sidebar-btn-secondary:hover {
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+        }
+
+        /* List/Map Toggle */
+        .view-toggle {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            display: flex;
+            padding: 4px;
+            z-index: 1000;
+        }
+
+        .view-toggle-btn {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            font-family: 'Dubai', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .view-toggle-btn.active {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .view-toggle-btn:hover:not(.active) {
+            background: var(--bg-light);
+        }
+
+        /* Favorites Button */
+        .favorites-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 44px;
+            height: 44px;
+            background: white;
+            border: none;
+            border-radius: 50%;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            color: var(--text-light);
+        }
+
+        .favorites-btn:hover {
+            color: #ef4444;
+            transform: scale(1.1);
+        }
+
+        .favorites-btn.active {
+            color: #ef4444;
+            background: #fee2e2;
+        }
+
+        /* Comparison Panel */
+        .comparison-panel {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            padding: 16px 20px;
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .comparison-panel.show {
+            display: flex;
+        }
+
+        .comparison-items {
+            display: flex;
+            gap: 10px;
+        }
+
+        .comparison-item {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .comparison-item-remove {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            width: 20px;
+            height: 20px;
+            background: #ef4444;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .comparison-btn {
+            padding: 10px 20px;
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Dubai', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .comparison-btn:hover {
+            background: var(--primary-dark);
+        }
+
         /* Leaflet Popup Customization */
         .leaflet-popup-content-wrapper {
             border-radius: 12px;
@@ -1644,6 +2141,40 @@
                 font-size: 9px;
                 padding: 4px 8px;
             }
+
+            .property-sidebar {
+                width: 100%;
+                right: -100%;
+            }
+
+            .property-sidebar.open {
+                right: 0;
+            }
+
+            .property-preview {
+                width: 260px;
+            }
+
+            .property-marker {
+                font-size: 11px;
+                padding: 5px 10px;
+            }
+
+            .view-toggle {
+                top: 10px;
+                transform: translateX(-50%) scale(0.9);
+            }
+
+            .comparison-panel {
+                bottom: 80px;
+                padding: 12px 16px;
+                max-width: calc(100% - 24px);
+            }
+
+            .comparison-item {
+                width: 50px;
+                height: 50px;
+            }
         }
     </style>
 </head>
@@ -1737,6 +2268,18 @@
             <div class="loading-overlay" id="loadingOverlay">
                 <div class="loading-spinner"></div>
                 <div class="loading-text">جاري تحميل الخريطة...</div>
+            </div>
+
+            <!-- List/Map Toggle -->
+            <div class="view-toggle">
+                <button class="view-toggle-btn active" onclick="toggleView('map')">
+                    <i class="fas fa-map"></i>
+                    <span>خريطة</span>
+                </button>
+                <button class="view-toggle-btn" onclick="toggleView('list')">
+                    <i class="fas fa-list"></i>
+                    <span>قائمة</span>
+                </button>
             </div>
 
             <!-- Map Controls -->
@@ -2003,6 +2546,80 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Property Details Sidebar -->
+            <div class="property-sidebar" id="propertySidebar">
+                <button class="property-sidebar-close" onclick="closePropertySidebar()">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="property-sidebar-gallery">
+                    <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800" alt="Property" class="property-sidebar-image" id="sidebarImage">
+                    <div class="property-sidebar-nav" id="sidebarNav"></div>
+                </div>
+                <div class="property-sidebar-content">
+                    <div class="property-sidebar-header">
+                        <div class="property-sidebar-price" id="sidebarPrice">2,500,000 درهم</div>
+                        <div class="property-sidebar-title" id="sidebarTitle">شقة فاخرة 3 غرف نوم</div>
+                        <div class="property-sidebar-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span id="sidebarLocation">دبي مارينا</span>
+                        </div>
+                    </div>
+                    <div class="property-sidebar-features">
+                        <div class="property-sidebar-feature">
+                            <div class="property-sidebar-feature-icon">
+                                <i class="fas fa-bed"></i>
+                            </div>
+                            <div class="property-sidebar-feature-label">غرف النوم</div>
+                            <div class="property-sidebar-feature-value" id="sidebarBeds">3</div>
+                        </div>
+                        <div class="property-sidebar-feature">
+                            <div class="property-sidebar-feature-icon">
+                                <i class="fas fa-bath"></i>
+                            </div>
+                            <div class="property-sidebar-feature-label">الحمامات</div>
+                            <div class="property-sidebar-feature-value" id="sidebarBaths">2</div>
+                        </div>
+                        <div class="property-sidebar-feature">
+                            <div class="property-sidebar-feature-icon">
+                                <i class="fas fa-ruler-combined"></i>
+                            </div>
+                            <div class="property-sidebar-feature-label">المساحة</div>
+                            <div class="property-sidebar-feature-value" id="sidebarSize">1,850 قدم²</div>
+                        </div>
+                    </div>
+                    <div class="property-sidebar-actions">
+                        <button class="property-sidebar-btn property-sidebar-btn-primary" onclick="contactAgent()">
+                            <i class="fas fa-phone"></i>
+                            <span>اتصل الآن</span>
+                        </button>
+                        <button class="property-sidebar-btn property-sidebar-btn-secondary" onclick="toggleFavorite()">
+                            <i class="far fa-heart"></i>
+                            <span>حفظ</span>
+                        </button>
+                        <button class="property-sidebar-btn property-sidebar-btn-secondary" onclick="addToComparison()">
+                            <i class="fas fa-balance-scale"></i>
+                            <span>مقارنة</span>
+                        </button>
+                        <button class="property-sidebar-btn property-sidebar-btn-secondary" onclick="shareProperty()">
+                            <i class="fas fa-share-alt"></i>
+                            <span>مشاركة</span>
+                        </button>
+                    </div>
+                    <div class="property-sidebar-section" id="sidebarDescription">
+                        <h4>الوصف</h4>
+                        <p>شقة فاخرة في قلب دبي مارينا مع إطلالة خلابة على البحر. تشمل جميع المرافق الحديثة وقريبة من المترو والمول.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparison Panel -->
+            <div class="comparison-panel" id="comparisonPanel">
+                <div class="comparison-items" id="comparisonItems"></div>
+                <button class="comparison-btn" onclick="viewComparison()">
+                    مقارنة (<span id="comparisonCount">0</span>)
+                </button>
+            </div>
         </div>
 
     </main>
@@ -2103,6 +2720,10 @@
 
         // Dubai center coordinates
         const dubaiCenter = [25.2048, 55.2708];
+
+        // Property comparison array
+        let comparisonProperties = [];
+        let currentProperty = null;
 
         // Dubai areas with real estate data
         const dubaiAreas = [
@@ -2294,6 +2915,92 @@
             return landmarks[areaNameEn] || null;
         }
 
+        // Sample properties (Madlan style)
+        const properties = [
+            // Dubai Marina properties
+            { id: 1, price: 2500000, pricePerSqft: 1350, beds: 3, baths: 2, size: 1850, location: 'Dubai Marina', lat: 25.0785, lng: 55.1372, type: 'apartment', featured: true, new: false, image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800' },
+            { id: 2, price: 1800000, pricePerSqft: 1400, beds: 2, baths: 2, size: 1285, location: 'Dubai Marina', lat: 25.0795, lng: 55.1365, type: 'apartment', featured: false, new: true, image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800' },
+            { id: 3, price: 3200000, pricePerSqft: 1450, beds: 4, baths: 3, size: 2205, location: 'Dubai Marina', lat: 25.0810, lng: 55.1385, type: 'apartment', featured: true, new: false, image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800' },
+
+            // Downtown properties
+            { id: 4, price: 4500000, pricePerSqft: 2250, beds: 3, baths: 3, size: 2000, location: 'Downtown Dubai', lat: 25.1960, lng: 55.2730, type: 'apartment', featured: true, new: false, image: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800' },
+            { id: 5, price: 3800000, pricePerSqft: 2100, beds: 2, baths: 2, size: 1810, location: 'Downtown Dubai', lat: 25.1975, lng: 55.2755, type: 'apartment', featured: false, new: true, image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800' },
+            { id: 6, price: 5200000, pricePerSqft: 2200, beds: 4, baths: 4, size: 2363, location: 'Downtown Dubai', lat: 25.1985, lng: 55.2740, type: 'penthouse', featured: true, new: false, image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800' },
+
+            // Palm Jumeirah properties
+            { id: 7, price: 8500000, pricePerSqft: 2800, beds: 5, baths: 5, size: 3035, location: 'Palm Jumeirah', lat: 25.1115, lng: 55.1380, type: 'villa', featured: true, new: false, image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800' },
+            { id: 8, price: 6200000, pricePerSqft: 2750, beds: 4, baths: 4, size: 2254, location: 'Palm Jumeirah', lat: 25.1125, lng: 55.1395, type: 'villa', featured: true, new: true, image: 'https://images.unsplash.com/photo-1600607687644-c7171b42498b?w=800' },
+            { id: 9, price: 4800000, pricePerSqft: 2900, beds: 3, baths: 3, size: 1655, location: 'Palm Jumeirah', lat: 25.1135, lng: 55.1405, type: 'apartment', featured: false, new: false, image: 'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800' },
+
+            // JBR properties
+            { id: 10, price: 2200000, pricePerSqft: 1680, beds: 2, baths: 2, size: 1310, location: 'JBR', lat: 25.0770, lng: 55.1305, type: 'apartment', featured: false, new: true, image: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800' },
+            { id: 11, price: 2900000, pricePerSqft: 1650, beds: 3, baths: 2, size: 1757, location: 'JBR', lat: 25.0780, lng: 55.1325, type: 'apartment', featured: false, new: false, image: 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800' },
+
+            // Business Bay properties
+            { id: 12, price: 1650000, pricePerSqft: 1320, beds: 1, baths: 1, size: 1250, location: 'Business Bay', lat: 25.1870, lng: 55.2620, type: 'apartment', featured: false, new: false, image: 'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?w=800' },
+            { id: 13, price: 2100000, pricePerSqft: 1350, beds: 2, baths: 2, size: 1555, location: 'Business Bay', lat: 25.1880, lng: 55.2635, type: 'apartment', featured: false, new: true, image: 'https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=800' },
+
+            // Dubai Hills properties
+            { id: 14, price: 3500000, pricePerSqft: 1580, beds: 4, baths: 3, size: 2215, location: 'Dubai Hills Estate', lat: 25.1040, lng: 55.2440, type: 'villa', featured: true, new: false, image: 'https://images.unsplash.com/photo-1600585154363-67eb9e2e2099?w=800' },
+            { id: 15, price: 2800000, pricePerSqft: 1600, beds: 3, baths: 2, size: 1750, location: 'Dubai Hills Estate', lat: 25.1055, lng: 55.2455, type: 'townhouse', featured: false, new: true, image: 'https://images.unsplash.com/photo-1600585152915-d208bec867a1?w=800' }
+        ];
+
+        // Add property markers to map
+        function addPropertyMarkers() {
+            properties.forEach(property => {
+                const markerHtml = `
+                    <div class="property-marker ${property.featured ? 'featured' : ''} ${property.new ? 'new' : ''}">
+                        ${(property.price / 1000000).toFixed(1)}M د.إ
+                        <div class="property-preview">
+                            <img src="${property.image}" alt="${property.location}" class="property-preview-image">
+                            <span class="property-preview-badge">${property.type === 'villa' ? 'فيلا' : property.type === 'penthouse' ? 'بنتهاوس' : property.type === 'townhouse' ? 'تاون هاوس' : 'شقة'}</span>
+                            <div class="property-preview-content">
+                                <div class="property-preview-price">${(property.price / 1000000).toFixed(2)} مليون درهم</div>
+                                <div class="property-preview-details">
+                                    <div class="property-preview-detail">
+                                        <i class="fas fa-bed"></i>
+                                        <span>${property.beds}</span>
+                                    </div>
+                                    <div class="property-preview-detail">
+                                        <i class="fas fa-bath"></i>
+                                        <span>${property.baths}</span>
+                                    </div>
+                                    <div class="property-preview-detail">
+                                        <i class="fas fa-ruler-combined"></i>
+                                        <span>${property.size.toLocaleString()} قدم²</span>
+                                    </div>
+                                </div>
+                                <div class="property-preview-location">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>${property.location}</span>
+                                </div>
+                                <div class="property-preview-actions">
+                                    <button class="property-preview-btn property-preview-btn-primary" onclick="openPropertySidebar(${property.id})">عرض التفاصيل</button>
+                                    <button class="property-preview-btn property-preview-btn-secondary" onclick="addToComparison(${property.id})">مقارنة</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                const marker = L.marker([property.lat, property.lng], {
+                    icon: L.divIcon({
+                        className: 'property-marker-container',
+                        html: markerHtml,
+                        iconSize: [80, 30],
+                        iconAnchor: [40, 15]
+                    }),
+                    zIndexOffset: property.featured ? 1000 : 500
+                });
+
+                marker.on('click', function() {
+                    openPropertySidebar(property.id);
+                });
+
+                markersCluster.addLayer(marker);
+            });
+        }
+
         // Initialize map
         function initMap() {
             // Create map
@@ -2328,10 +3035,121 @@
             // Add area polygons and markers
             addAreaLayers();
 
+            // Add property markers
+            addPropertyMarkers();
+
+            // Add cluster layer to map
+            map.addLayer(markersCluster);
+
             // Hide loading overlay
             setTimeout(() => {
                 document.getElementById('loadingOverlay').classList.add('hidden');
             }, 1000);
+        }
+
+        // Open property sidebar
+        function openPropertySidebar(propertyId) {
+            const property = properties.find(p => p.id === propertyId);
+            if (!property) return;
+
+            currentProperty = property;
+
+            document.getElementById('sidebarPrice').textContent = `${(property.price / 1000000).toFixed(2)} مليون درهم`;
+            document.getElementById('sidebarTitle').textContent = `${property.type === 'villa' ? 'فيلا' : property.type === 'penthouse' ? 'بنتهاوس' : property.type === 'townhouse' ? 'تاون هاوس' : 'شقة'} ${property.beds} غرف نوم`;
+            document.getElementById('sidebarLocation').textContent = property.location;
+            document.getElementById('sidebarBeds').textContent = property.beds;
+            document.getElementById('sidebarBaths').textContent = property.baths;
+            document.getElementById('sidebarSize').textContent = `${property.size.toLocaleString()} قدم²`;
+            document.getElementById('sidebarImage').src = property.image;
+
+            document.getElementById('propertySidebar').classList.add('open');
+        }
+
+        // Close property sidebar
+        function closePropertySidebar() {
+            document.getElementById('propertySidebar').classList.remove('open');
+        }
+
+        // Add to comparison
+        function addToComparison(propertyId) {
+            const property = propertyId ? properties.find(p => p.id === propertyId) : currentProperty;
+            if (!property) return;
+
+            if (comparisonProperties.length >= 3) {
+                alert('يمكنك مقارنة 3 عقارات كحد أقصى');
+                return;
+            }
+
+            if (comparisonProperties.find(p => p.id === property.id)) {
+                alert('هذا العقار موجود بالفعل في المقارنة');
+                return;
+            }
+
+            comparisonProperties.push(property);
+            updateComparisonPanel();
+        }
+
+        // Remove from comparison
+        function removeFromComparison(propertyId) {
+            comparisonProperties = comparisonProperties.filter(p => p.id !== propertyId);
+            updateComparisonPanel();
+        }
+
+        // Update comparison panel
+        function updateComparisonPanel() {
+            const panel = document.getElementById('comparisonPanel');
+            const itemsContainer = document.getElementById('comparisonItems');
+            const countElement = document.getElementById('comparisonCount');
+
+            if (comparisonProperties.length > 0) {
+                panel.classList.add('show');
+                countElement.textContent = comparisonProperties.length;
+
+                itemsContainer.innerHTML = comparisonProperties.map(prop => `
+                    <div class="comparison-item" style="background-image: url('${prop.image}')">
+                        <div class="comparison-item-remove" onclick="removeFromComparison(${prop.id})">
+                            <i class="fas fa-times"></i>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                panel.classList.remove('show');
+            }
+        }
+
+        // View comparison
+        function viewComparison() {
+            if (comparisonProperties.length < 2) {
+                alert('الرجاء إضافة عقارين على الأقل للمقارنة');
+                return;
+            }
+            alert('سيتم فتح صفحة المقارنة قريباً');
+        }
+
+        // Toggle favorite
+        function toggleFavorite() {
+            alert('تم الحفظ في المفضلة');
+        }
+
+        // Contact agent
+        function contactAgent() {
+            alert('سيتم الاتصال بالوكيل قريباً');
+        }
+
+        // Share property
+        function shareProperty() {
+            alert('مشاركة العقار');
+        }
+
+        // Toggle view (list/map)
+        function toggleView(view) {
+            const buttons = document.querySelectorAll('.view-toggle-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.closest('.view-toggle-btn').classList.add('active');
+
+            if (view === 'list') {
+                alert('عرض القائمة سيتم إضافته قريباً');
+            }
         }
 
         // Add area layers to map
